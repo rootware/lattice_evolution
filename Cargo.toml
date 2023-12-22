@@ -1,5 +1,5 @@
 [package]
-name = "string_manip"
+name = "lattice_evolution"
 version = "0.1.0"
 edition = "2021"
 
@@ -7,4 +7,5 @@ edition = "2021"
 
 [dependencies]
 ndarray = "0.15.6"
-num-complex = "0.4"
+num-complex = "0.4.4"
+nalgebra = "0.32.3"
