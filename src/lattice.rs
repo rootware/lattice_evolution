@@ -33,10 +33,10 @@ impl Default for Lattice {
         let diagonal : Vec<Complex64>= (0..N_STATES).map(|i| Complex64::new(i as f64 * 2.0 -max_p, 0.0)).collect();
         // Is there an easier way to convert the f64 diagonal into a Complex valued array?
         
-       let h0 = SMatrix::<Complex64, N_STATES, N_STATES>::from_vec(diagonal);
+        let h0 = SMatrix::<Complex64, N_STATES, N_STATES>::from_vec(diagonal);
 
         let mut h1 = SMatrix::<Complex64, N_STATES, N_STATES>::from_element(Complex64::new(0.0,0.0)); 
-    
+
         let h2 = SMatrix::<Complex64, N_STATES, N_STATES>::identity();
 
         for i in 1..(N_STATES -1){
