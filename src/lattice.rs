@@ -35,7 +35,7 @@ impl Lattice {
     }
 
     pub fn accelerate(&mut self, impulse: f64) {
-        self.q+= impulse;
+        self.q += impulse;
         let max_p: f64 = (N_STATES as f64)-1.0 ; 
 
         let diagonal = DVector::<Complex64>::from_vec( (0..N_STATES).map(|i| {
@@ -104,7 +104,7 @@ impl Lattice {
         let hamiltonian = &h0 - &h2;
 
         let eigvec = -hamiltonian.symmetric_eigen().eigenvectors;
-        let mut psitemp = eigvec.column(1).into();
+        let mut psitemp : DVector<Complex64>= eigvec.column(1).into();
         if psitemp[5].re <= 0.0 {
             psitemp = &psitemp*Complex64::from(-1.0);
         };
@@ -117,7 +117,7 @@ impl Lattice {
             h0 ,
             h1 ,
             h2 ,
-            psi: eigvec.column(1).into()
+            psi: psitemp
         }
     }
 }
