@@ -1,2 +1,4 @@
-# (In Progress) Lattice Evolution Code 
-Rust version of the kind of research projects I do in C++ and ML. Exact physics and other constraints are different from the research code.
+# Shaken Lattice Statistical Analysis (Rust version)
+This project began as a learning experience: to code the C++ version of the SLI in Rust. However, this has since become the main code for generating momentum probabilities as
+- Implemented multithreading, so faster runs
+- Was able to do more precise runs, and hence do faster comparisons between JSD plots.
