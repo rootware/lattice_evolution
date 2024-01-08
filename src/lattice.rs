@@ -104,6 +104,10 @@ impl Lattice {
         let hamiltonian = &h0 - &h2;
 
         let eigvec = -hamiltonian.symmetric_eigen().eigenvectors;
+        let mut psitemp = eigvec.column(1).into();
+        if psitemp[5].re <= 0.0 {
+            psitemp = &psitemp*Complex64::from(-1.0);
+        };
       //  let mut psitemp :DVector<Complex64> = eigvec.column(3).into();
       //  psitemp = &psitemp/Complex64::from((&psitemp).norm_squared());
         Self {
