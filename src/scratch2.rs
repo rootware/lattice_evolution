@@ -59,3 +59,28 @@ fn main() {
     println!("{:#?}", momentum);
  }
  */
+
+ /*
+fn main() {
+   let mut latt = Lattice::new(-0.01, 10.0);
+
+
+   let shakingfunctions = vec![1.83259571, 0., 1.83259571, 2.87979327, 1.83259571, 1.83259571, 1.83259571, 3.40339204, 3.66519143,
+   3.40339204, 3.40339204, 3.14159265, 3.92699082, 3.92699082, 2.35619449, 2.35619449, 3.92699082, 3.92699082,
+   3.92699082, 3.66519143, 3.66519143, 3.66519143, 2.61799388, 3.66519143, 1.57079633, 1.57079633, 1.57079633,
+   1.04719755, 1.04719755, 1.04719755, 1.04719755, 1.57079633];
+   let mut sign = 1.0;
+   println!("{}", latt.get_psi());
+   for ampl in shakingfunctions{
+      latt.step( sign*ampl, FREQ);
+      sign*= -1.0;
+   };
+
+   let out = latt.get_psi();
+   let momentum_i: Vec<Complex64> = (out.conjugate().component_mul(&out)).data.into();
+   let momentum : Vec<f64> = momentum_i.iter().map(|&m| m.re).collect();
+   println!("{:#?}", momentum);
+
+
+}
+*/
