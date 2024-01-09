@@ -3,26 +3,22 @@
 use num_complex::Complex64;
 use lattice::Lattice;
 use rayon::prelude::*;
-
+const FREQ: f64 = 11.5;
 
 use std::fs::OpenOptions;
 use std::fs::File;
 use std::io::Write;
 use std::sync::Mutex;
 
-const FREQ: f64 = 11.5;
-const TOGGLE_INIT : f64 = 1.0;
+
 
 
 
 fn main() {
-  /*/ let shakingfunctions2p2e: Vec<f64>= vec![1.83259571, 0., 1.83259571, 2.87979327, 1.83259571, 1.83259571, 1.83259571, 3.40339204, 3.66519143,
+   let shakingfunctions2p2e: Vec<f64>= vec![1.83259571, 0., 1.83259571, 2.87979327, 1.83259571, 1.83259571, 1.83259571, 3.40339204, 3.66519143,
    3.40339204, 3.40339204, 3.14159265, 3.92699082, 3.92699082, 2.35619449, 2.35619449, 3.92699082, 3.92699082,
    3.92699082, 3.66519143, 3.66519143, 3.66519143, 2.61799388, 3.66519143, 1.57079633, 1.57079633, 1.57079633,
-   1.04719755, 1.04719755, 1.04719755, 1.04719755, 1.57079633]; */
-
-   let latt_shaking : Vec<f64> = vec![1.83259571, 1.83259571, 1.83259571, 1.83259571, 1.83259571, 1.83259571, 1.04719755, 1.04719755, 1.04719755,
-   0., 0., 0.52359878, 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.26179939, 0., 0., 0., 0., 0., 0., 0., 0.];
+   1.04719755, 1.04719755, 1.04719755, 1.04719755, 1.57079633]; 
    
    let _file2 = File::create("test.txt").unwrap();
    //file2.write_all(b"Create\n").unwrap();
@@ -42,8 +38,8 @@ fn main() {
          let latdep : f64 =  9.0 + (2.0* y as f64)/(50 as f64);
          let mut latt = Lattice::new(acc, latdep);
 
-         let mut sign = TOGGLE_INIT;
-         for ampl in &latt_shaking{
+         let mut sign = -1.0;
+         for ampl in &shakingfunctions2p2e{
              latt.step( *ampl*sign, FREQ);
              sign *= -1.0;
          };

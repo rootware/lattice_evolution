@@ -82,6 +82,7 @@ impl Lattice {
     pub fn new(acceleration: f64, latticedepth: f64) -> Lattice {
         let max_p: f64 = (N_STATES as f64)-1.0 ; 
 
+            
         let diagonal = DVector::<Complex64>::from_vec( (0..N_STATES).map(|i| {
             Complex64::new((i as f64 * 2.0 -max_p).powi(2), 0.0)
         }).collect() );
