@@ -26,8 +26,8 @@ We define
 To bound $JSD\in [0,1]$, we use $\log_2$ .
 
 For these, we can expand in $\delta_a, \delta_V$ and obtain the following relations:
-1. $$ JSD(a',a)= \frac{1}{8\ln 2} \delta_a^2 I_{aa}$$
-2. $$ JSD(V_0',V_0)= \frac{1}{8\ln 2} \delta_V^2 I_{VV}$$
+1. $$JSD(a',a)= \frac{1}{8\ln 2} \delta_a^2 I_{aa}$$
+2. $$JSD(V_0',V_0)= \frac{1}{8\ln 2} \delta_V^2 I_{VV}$$
 3. $$JSD(a',V_0') =  JSD(a',a)= \frac{1}{8\ln 2} \delta_a^2 I_{aa} + \frac{1}{8\ln 2} \delta_V^2 I_{VV} - \frac{\delta_a \delta_V}{\ln 2} I_{aV}$$
 Our outstanding questions are the following:
 - Can we extract $I_{aa}$ from JSD, and does it match what we expect from the CFI the RL claims for the sequences?
