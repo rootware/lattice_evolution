@@ -8,13 +8,20 @@ const N_STEPS : i128 = 10000;
 /// Lattice struct represents an instance of the Shaken Optical Lattice
 #[derive(Debug)]
 pub struct Lattice {
-    g : f64, // acceleration/gravity
-    q: f64, // Correction to pure momentum, $(p+q)$ is kinematic momentum
-    depth: f64, // lattice depth
-    h0: DMatrix<Complex64>, //The Kinetic part of the Hamiltonian
-    h1: DMatrix<Complex64>, //The $sin(\phi)$ part of the lattice coupling
-    h2: DMatrix<Complex64>, // the $\cos(\phi)$ part of the lattice coupling
-    psi: DVector<Complex64> // current wavefunction of wavepacket moving through lattice
+    /// acceleration/gravity
+    g : f64, 
+    /// Correction to pure momentum, $(p+q)$ is kinematic momentum
+    q: f64, 
+    /// lattice depth
+    depth: f64, 
+    ///The Kinetic part of the Hamiltonian
+    h0: DMatrix<Complex64>, 
+    ///The $sin(\phi)$ part of the lattice coupling
+    h1: DMatrix<Complex64>, 
+    /// the $\cos(\phi)$ part of the lattice coupling
+    h2: DMatrix<Complex64>, 
+    /// current wavefunction of wavepacket moving through lattice
+    psi: DVector<Complex64> 
 }
 
 impl Lattice {

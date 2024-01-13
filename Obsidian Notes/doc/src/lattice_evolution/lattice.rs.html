@@ -143,6 +143,13 @@
 <a href="#143" id="143">143</a>
 <a href="#144" id="144">144</a>
 <a href="#145" id="145">145</a>
+<a href="#146" id="146">146</a>
+<a href="#147" id="147">147</a>
+<a href="#148" id="148">148</a>
+<a href="#149" id="149">149</a>
+<a href="#150" id="150">150</a>
+<a href="#151" id="151">151</a>
+<a href="#152" id="152">152</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>num_complex::Complex64;
 <span class="kw">use </span>nalgebra::{ DMatrix,DVector};
 <span class="kw">const </span>N_STATES : usize = <span class="number">11</span>; <span class="comment">// Size of matrices
@@ -153,14 +160,21 @@
 <span class="doccomment">/// Lattice struct represents an instance of the Shaken Optical Lattice
 </span><span class="attr">#[derive(Debug)]
 </span><span class="kw">pub struct </span>Lattice {
-    g : f64, <span class="comment">// acceleration/gravity
-    </span>q: f64, <span class="comment">// Correction to pure momentum, $(p+q)$ is kinematic momentum
-    </span>depth: f64, <span class="comment">// lattice depth
-    </span>h0: DMatrix&lt;Complex64&gt;, <span class="comment">//The Kinetic part of the Hamiltonian
-    </span>h1: DMatrix&lt;Complex64&gt;, <span class="comment">//The $sin(\phi)$ part of the lattice coupling
-    </span>h2: DMatrix&lt;Complex64&gt;, <span class="comment">// the $\cos(\phi)$ part of the lattice coupling
-    </span>psi: DVector&lt;Complex64&gt; <span class="comment">// current wavefunction of wavepacket moving through lattice
-</span>}
+    <span class="doccomment">/// acceleration/gravity
+    </span>g : f64, 
+    <span class="doccomment">/// Correction to pure momentum, $(p+q)$ is kinematic momentum
+    </span>q: f64, 
+    <span class="doccomment">/// lattice depth
+    </span>depth: f64, 
+    <span class="doccomment">///The Kinetic part of the Hamiltonian
+    </span>h0: DMatrix&lt;Complex64&gt;, 
+    <span class="doccomment">///The $sin(\phi)$ part of the lattice coupling
+    </span>h1: DMatrix&lt;Complex64&gt;, 
+    <span class="doccomment">/// the $\cos(\phi)$ part of the lattice coupling
+    </span>h2: DMatrix&lt;Complex64&gt;, 
+    <span class="doccomment">/// current wavefunction of wavepacket moving through lattice
+    </span>psi: DVector&lt;Complex64&gt; 
+}
 
 <span class="kw">impl </span>Lattice {
     <span class="doccomment">/// Returns $V_0$ of this Lattice
