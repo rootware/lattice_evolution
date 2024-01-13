@@ -11,9 +11,11 @@
             "id": "ff7affefcd8d787a",
             "type": "leaf",
             "state": {
-              "type": "image",
+              "type": "markdown",
               "state": {
-                "file": "Obsidian Notes/Jenson Shannon Divergence/Pasted image 20240111094433.png"
+                "file": "Obsidian Notes/Jenson Shannon Divergence/Jenson-Shannon Detailed Notes.md",
+                "mode": "source",
+                "source": false
               }
             }
           }
@@ -83,7 +85,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Obsidian Notes/Jenson Shannon Divergence/Pasted image 20240111094433.png",
+                "file": "Obsidian Notes/Jenson Shannon Divergence/Jenson-Shannon Detailed Notes.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -100,7 +102,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "Obsidian Notes/Jenson Shannon Divergence/Pasted image 20240111094433.png",
+                "file": "Obsidian Notes/Jenson Shannon Divergence/Jenson-Shannon Detailed Notes.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -123,7 +125,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Obsidian Notes/Jenson Shannon Divergence/Pasted image 20240111094433.png"
+                "file": "Obsidian Notes/Jenson Shannon Divergence/Jenson-Shannon Detailed Notes.md"
               }
             }
           }

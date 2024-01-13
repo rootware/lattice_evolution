@@ -22,7 +22,7 @@ For lattice sensitive sequences, we expect high JSD variance near the origin of 
 We define
 1. $JSD(a'a,)$ as the JSD between momentum probability distributions with same $V_0$, usually $V_0=10.0$. 
 2. $JSD(V_0',V_0)$ as JSD for probability distributions with same $a$, usually $a=0.0$.
-3. $JSD(a',V_0')$ as JSD between probability distributions with $(a', V_0=10.0)$ and $(a=0.0, V_'0)$ with $(a',V_0')$ varying.
+3. $JSD(a',V_0')$ as JSD between probability distributions with $(a', V_0=10.0)$ and $(a=0.0, V_0')$ with $(a',V_0')$ varying.
 To bound $JSD\in [0,1]$, we use $\log_2$ .
 
 For these, we can expand in $\delta_a, \delta_V$ and obtain the following relations:
