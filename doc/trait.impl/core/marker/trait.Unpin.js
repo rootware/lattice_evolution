@@ -1,0 +1,3 @@
+(function() {var implementors = {
+"lattice_evolution":[["impl <a class=\"trait\" href=\"https://doc.rust-lang.org/1.75.0/core/marker/trait.Unpin.html\" title=\"trait core::marker::Unpin\">Unpin</a> for <a class=\"struct\" href=\"lattice_evolution/lattice/struct.Lattice.html\" title=\"struct lattice_evolution::lattice::Lattice\">Lattice</a>",1,["lattice_evolution::lattice::Lattice"]]]
+};if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()
