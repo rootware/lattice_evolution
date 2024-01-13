@@ -49,13 +49,13 @@ fn main() {
    // We multithread iterator over acceleration, but not lattice depth. 
    // Sufficient for my laptop/desktop.
    let _sum : Vec<f64> = (0..101).into_par_iter().map(|x| {
-      let acc = -0.00225 + (0.00225*2.0 * x as f64)/(100 as f64);
-      
+      //let acc = -0.00225 + (0.00225*2.0 * x as f64)/(100 as f64);
+      let acc = -0.00035685+ (0.00035685*2.0 * x as f64)/(100 as f64); // for fine single param bayesian
      // for y in 0..51 {
          //let latdep : f64 =  9.0 + (2.0* y as f64)/(50 as f64);
       
       // do single param
-      for y in 0..=1{
+      for y in 0..1{
          let latdep : f64 =  10.0;// doing single param right now
 
       // end single param edits
