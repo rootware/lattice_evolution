@@ -2,7 +2,7 @@
 This project began as a learning experience: to code the C++ version (see Github: End2End_SLI) of the SLI in Rust. However, this has since become the main code for generating momentum probabilities and doing the statistical analysis section of the paper. Main differences from C++ code:
 - Implemented multithreading using Rayon crate for iterators, so faster runs
 - Was able to do more precise runs, and hence do faster comparisons between JSD plots.
-- The C++ code library includes the `Environment` class that I used for training with the Libtorch DQNN implementation in the Holland Group. Here, we have a simpler struct `Lattice` that differs slightly from the `Wavepacket`` class in C++.
+- The C++ code library includes the `Environment` class that I used for training with the Libtorch DQNN implementation in the Holland Group. Here, we have a simpler struct `Lattice` that differs slightly from the `Wavepacket` class in C++.
 - The Rust style docs are available as .html under docs/ folder.
 - The Obsidian folder contains notes for project in Markdown.
 
@@ -26,4 +26,4 @@ There are three example notebooks for this:
 - JSD plots for multiparameter
 - Comparing Bayesian between two sequences
 
-While the notebooks may illustrate multiple different ways of plotting, recommend using them only as illustrative examples. Use the Sequence2param.py and Units.py files when doing your own plots for consistency.
+While the notebooks may illustrate multiple different ways of plotting, recommend using them only as illustrative examples. Use the `Sequence2param.py` and `Units.py` files when doing your own plots for consistency.
