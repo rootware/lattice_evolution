@@ -13,7 +13,7 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Obsidian Notes/Jenson Shannon Divergence/JSD Results section.md",
+                "file": "Obsidian Notes/Bayesian/Bayesian.md",
                 "mode": "source",
                 "source": false
               }
@@ -85,7 +85,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Obsidian Notes/Jenson Shannon Divergence/JSD Results section.md",
+                "file": "Obsidian Notes/Bayesian/Bayesian.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -102,7 +102,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "Obsidian Notes/Jenson Shannon Divergence/JSD Results section.md",
+                "file": "Obsidian Notes/Bayesian/Bayesian.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -125,7 +125,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Obsidian Notes/Jenson Shannon Divergence/JSD Results section.md"
+                "file": "Obsidian Notes/Bayesian/Bayesian.md"
               }
             }
           }
@@ -148,6 +148,24 @@
   },
   "active": "ff7affefcd8d787a",
   "lastOpenFiles": [
+    "Python/JS_acc.png",
+    "Data/Rust_Runs/Option2_only_acc_Bayesian/Option2_1onlyacc_Bayesian_2.pdf",
+    "Python/Option2_1onlyacc_Bayesian_2.pdf",
+    "Python/Option2_1onlyacc_Bayesian.pdf",
+    "Data/Rust_Runs/Option2_only_acc_Bayesian/test.txt",
+    "Data/Rust_Runs/Option2_only_acc_Bayesian/Option2_1onlyacc_Bayesian.pdf",
+    "target/debug/incremental/lattice_evolution-3udtsn5ccr62c/s-gsgxmpg3bt-16ux5ic-f104chq7liwcdruiwevvpajuv/work-products.bin",
+    "target/debug/incremental/lattice_evolution-3udtsn5ccr62c/s-gsgxmpg3bt-16ux5ic-f104chq7liwcdruiwevvpajuv/query-cache.bin",
+    "target/debug/incremental/lattice_evolution-3udtsn5ccr62c/s-gsgxmpg3bt-16ux5ic-f104chq7liwcdruiwevvpajuv/dep-graph.bin",
+    "target/debug/incremental/lattice_evolution-3udtsn5ccr62c/s-gsgxmpg3bt-16ux5ic-f104chq7liwcdruiwevvpajuv",
+    "target/debug/incremental/lattice_evolution-1xy3fztl2oxq/s-gsgxmpg3jt-1gc4o2q-76w7mjwvh8h1qf5me0v4k6ano/work-products.bin",
+    "Pasted image 20240114161047.png",
+    "Pasted image 20240114160936.png",
+    "Pasted image 20240114160716.png",
+    "Obsidian Notes/Bayesian/Bayesian.md",
+    "Pasted image 20240114160052.png",
+    "Pasted image 20240114160151.png",
+    "Pasted image 20240114155927.png",
     "Obsidian Notes/Jenson Shannon Divergence/Jenson-Shannon Detailed Notes.md",
     "Obsidian Notes/Jenson Shannon Divergence/JSD Results section.md",
     "Obsidian Notes/Jenson Shannon Divergence/Pasted image 20240111094951.png",
