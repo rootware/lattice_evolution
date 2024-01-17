@@ -39,4 +39,34 @@ Do 2000 outcomes and 25,000 outcomes.
 For 25,000 outcomes:
 - CFI extracted with prob mean = 1.622253965762357 F_MZ
 - Plots are in `Option2_acconly_Bayesian` in Rust runs
-  
+
+### Quick Notes
+Lattice sensitive shaking protocol
+
+regular interferometer where we've maximized I_aa and CFIM elements plusnI_aV
+
+50ns resolution
+
+
+1064nm
+
+Yeah it's a new thing, even I dont know how to best frame it haha. But here's my pitch:  
+ If I do Bayesian estimation and get a value of a from it, then for a fixed number of measurements, there's an associated error bar \delta_a with it. For example, if you're have some granularity in your momentum measurements so youre only confident about your KL-divergence to an error bar epsilon, then you  read off a $\delta_a$ from our divergence plots for that epsilon, and should also correspondingly only be confident about your Bayesian estimation of a to that \delta_a.
+
+![white_check_mark](https://a.slack-edge.com/production-standard-emoji-assets/14.0/google-small/2705.png)![eyes](https://a.slack-edge.com/production-standard-emoji-assets/14.0/google-small/1f440.png)![raised_hands](https://a.slack-edge.com/production-standard-emoji-assets/14.0/google-small/1f64c.png)
+
+[4:54](https://shakenlattice.slack.com/archives/D05UNBLQ9RS/p1705449273654609)
+
+Just because we are providing Bayesian priors in this paper with high precision doesn't mean an experimentalist should take them without that word of caution
+
+[4:54](https://shakenlattice.slack.com/archives/D05UNBLQ9RS/p1705449277328149)
+
+Anyway thats my pitch
+If an experimentalist had infinite precision in their momentum measurements, then I can show that the Bayesian estimation error scales as the Fisher information $I_{aa}$.
+
+![white_check_mark](https://a.slack-edge.com/production-standard-emoji-assets/14.0/google-small/2705.png)![eyes](https://a.slack-edge.com/production-standard-emoji-assets/14.0/google-small/1f440.png)![raised_hands](https://a.slack-edge.com/production-standard-emoji-assets/14.0/google-small/1f64c.png)
+
+[5:01](https://shakenlattice.slack.com/archives/D05UNBLQ9RS/p1705449719600049)
+
+this is all for a fixed number of measurements (relevant since no. of atoms in experiment is limited). With high number of measurements, error goes down
+
