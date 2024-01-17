@@ -8,6 +8,10 @@ use std::fs::OpenOptions;
 use std::fs::File;
 use std::io::Write;
 use std::sync::Mutex;
+use indicatif::ProgressBar;
+use indicatif::ProgressStyle;
+
+
 
 /// This const is usually used to fix $\omega$ for our shaking functions 
 /// to be $\omega=11.5\omega_r$, since we only vary the amplitude of the shaking function in this RL.
@@ -35,30 +39,33 @@ fn main() {
    1.04719755, 1.04719755, 1.04719755, 1.04719755, 1.57079633];//1param acc
    
    // Create file
-   let _file2 = File::create("test.txt").unwrap();
+   let _file2 = File::create("./MP_acc_multiparamBayesianpriors/test.txt").unwrap();
 
    // Open file
    let file = OpenOptions::new()
       .write(true)
       .append(true)
-      .open("test.txt").unwrap();
+      .open("./MP_acc_multiparamBayesianpriors/test.txt").unwrap();
 
    // Wrap file in Mutex for thread safety
    let file = Mutex::new(file);
 
    // We multithread iterator over acceleration, but not lattice depth. 
    // Sufficient for my laptop/desktop.
+   println!("Generating multiparam Bayesian priors for SP sequence");
+
+   let bar = ProgressBar::new(500 );
+   bar.set_style(ProgressStyle::with_template("[{elapsed_precise}] {wide_bar:100.cyan/blue} {pos:>7}/{len:7} {msg}")
+    .unwrap()
+    .progress_chars("##-"));
+
    let _sum : Vec<f64> = (0..501).into_par_iter().map(|x| {
      // let acc = -0.00225 + (0.00225*2.0 * x as f64)/(1000 as f64);
      let acc = -0.0225 + (0.0225*2.0 * x as f64)/(500 as f64);
-     // for y in 0..51 {
-         //let latdep : f64 =  9.0 + (2.0* y as f64)/(50 as f64);
+     for y in 0..51 {
+         let latdep : f64 =  9.0 + (2.0* y as f64)/(50 as f64);
       
-      // do single param
-      for y in 0..1{
-         let latdep : f64 =  10.0;// doing single param right now
 
-      // end single param edits
 
          let mut latt = Lattice::new(acc, latdep);
 
@@ -90,7 +97,7 @@ fn main() {
          
       }
       
-      acc}).collect();
+      bar.inc(1); acc}).collect();
 
 
    

@@ -10,3 +10,4 @@ ndarray = "0.15.6"
 num-complex = "0.4.4"
 nalgebra = "0.32.3"
 rayon = "1.8.0"
+indicatif = {version = "*", features = ["rayon"]}
