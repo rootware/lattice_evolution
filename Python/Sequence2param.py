@@ -72,7 +72,7 @@ class Sequence2param:
         PossibleOutcomes = range(0,11);
         datamom =np.reshape(self.MomProb, (self.AList.size,self.VList.size,11));
 
-        P_actual=np.array(datamom[50,25,:]); # Fix this hardcoded value
+        P_actual=np.array(datamom[int((self.AList.shape[0]-1)/2),int((self.VList.shape[0]-1)/2),:]); # Fix this hardcoded value #FUCK
 
         P_actual=P_actual/np.sum(P_actual);
         P_simulated = P_actual; #No errors
@@ -105,7 +105,7 @@ class Sequence2param:
 
 
     def accJSD (self):
-        momindices=np.where(self.AVListIndex[:,1]==25)[0];
+        momindices=np.where(self.AVListIndex[:,1]==int((self.VList.shape[0]-1)/2))[0];
         momproblist =self.MomProb[momindices];
         indices = self.AVListIndex[momindices];
 
@@ -124,11 +124,11 @@ class Sequence2param:
         return JSDivergenceMatrix;
 
     def crossJSD(self):
-        momindices_a=np.where(self.AVListIndex[:,1]==25)[0];
+        momindices_a=np.where(self.AVListIndex[:,1]==int((self.VList.shape[0]-1)/2))[0];
         momproblist_a =self.MomProb[momindices_a];
         indices_a = self.AVListIndex[momindices_a];
 
-        momindices_V=np.where(self.AVListIndex[:,0]==50)[0];
+        momindices_V=np.where(self.AVListIndex[:,0]==int((self.AList.shape[0]-1)/2))[0];
         momproblist_V = self.MomProb[momindices_V];
         indices_V = self.AVListIndex[momindices_V];
 
