@@ -1,6 +1,8 @@
 import numpy as np;
 import matplotlib.pyplot as plt;
 import scipy.fft as fft;
+import typing;
+
 
 
 def KLDivergence(  P, Q):
@@ -22,16 +24,50 @@ class Sequence2param:
 
 
 
-    def __init__ (self, filepath):
-        self.AList = np.loadtxt("./Data/2param_acc_Option2/" + "Acceleration.txt");
-        self.VList = np.loadtxt("./Data/2param_acc_Option2/" + "LatticeDepth.txt");
+    def __init__ (self, filepath: str, generate: bool ):
+        """
+        Initializes this instance for a given Sequence's data
+
+        @filepath: string containing the location for data files
+
+        @generate: a boolean telling whether to generate secondary data files from `test.txt`,
+        the output of the Rust simulation code. If true, generates files containing acceleration, lattice depth, 
+        [acceleration index, lattice depth index] and momentum probabilities respectively.
+
+        """    
+        if generate == True:
+
+            data = np.loadtxt(filepath + "test.txt");
+            datanew  = data[ np.lexsort((data[:,1],data[:,0])) ]
+            AVIndex = datanew[:,0:2]
+
+            AList = np.unique(datanew[:,2]);
+            VList = np.unique(datanew[:,3]);
+
+            MomProbdata=datanew[:,4:] #may depend on file, please check
+            np.savetxt(filepath + "Acceleration.txt",AList);
+            np.savetxt(filepath + "LatticeDepth.txt",VList);
+
+            np.savetxt(filepath + "AVIndex.txt",AVIndex)
+            np.savetxt(filepath + "MomProb.txt",MomProbdata) 
+
+
+        self.working_directory = filepath;
+        self.AList = np.loadtxt(filepath + "Acceleration.txt");
+        self.VList = np.loadtxt(filepath  + "LatticeDepth.txt");
 
         self.AVListIndex = np.loadtxt(filepath + "AVIndex.txt", dtype = int);
         self.MomProb = np.loadtxt(filepath + "MomProb.txt"); # np array with rows containing momentum probabilities for each [a,V] value pair in AVList
         self.a0 = 0.0;
         self.V0 = 10.0;
 
-    def BayesianUpdating(self, totalmeasurements, recordstep, totalrecords):
+
+            
+
+    def BayesianUpdating(self, totalmeasurements: int, recordstep: int, totalrecords: int, save_measurement: bool):
+        """
+        @save_measurement saves the generated outcomes so results can be replicated
+        """
         PossibleMomentumOutcomes =np.array( [-10+2*i for i in range(0,11)]); # values of momentum in n\hbar k_L
         PossibleOutcomes = range(0,11);
         datamom =np.reshape(self.MomProb, (self.AList.size,self.VList.size,11));
@@ -43,6 +79,9 @@ class Sequence2param:
 
         Runs=totalmeasurements; # How many simulated data do we want
         outcomes = np.random.default_rng().choice(PossibleOutcomes,size=Runs, p = P_simulated);
+        if save_measurement == True:
+            np.savetxt(self.working_directory+str(len(outcomes))+".txt", outcomes);
+        
         unique, frequency = np.unique(outcomes, return_counts = True);
 
         PaVprior = np.full((self.AList.size, self.VList.size),1)/(self.AList.size*self.VList.size);
