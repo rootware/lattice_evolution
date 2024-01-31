@@ -11,3 +11,5 @@ num-complex = "0.4.4"
 nalgebra = "0.32.3"
 rayon = "1.8.0"
 indicatif = {version = "*", features = ["rayon"]}
+rand_distr = "0.4.3"
+rand = "0.8.5"

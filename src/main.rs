@@ -1,9 +1,12 @@
+pub mod jittery_lattice;
 pub mod lattice;
-use num_complex::Complex64;
-use lattice::Lattice;
+
 use rayon::prelude::*;
 
-
+use num_complex::Complex64;
+use lattice::Lattice;
+use jittery_lattice::JitteryLattice;
+use nalgebra::DVector;
 use std::fs::OpenOptions;
 use std::fs::File;
 use std::io::Write;
@@ -22,6 +25,22 @@ const FREQ: f64 = 11.5;
 const TOGGLE_INIT : f64 = 1.0;
 
 
+fn jenson_shannon_divergence( p1: Vec<f64>, p2: Vec<f64>) -> f64{
+   let p1 = DVector::from_vec(p1);
+   let p2 = DVector::from_vec(p2);
+   let mixed = 0.5*(&p1+&p2);
+   return 0.5*(kl_divergence(p1,mixed.clone())+ kl_divergence(p2, mixed.clone()));
+
+}
+
+fn kl_divergence( p: DVector<f64>, q: DVector<f64>)-> f64 {
+   let mut temp = p.clone();
+   for x in 0..temp.len() {
+      temp[x] = - p[x]*f64::log2( q[x]/p[x]);
+   }
+   return temp.sum();
+}
+
 /// #Description of code:
 /// 
 /// AUTHOR: SHAH SAAD ALAM
@@ -36,50 +55,77 @@ fn main() {
    let latt_shaking : Vec<f64> = vec![1.83259571, 0., 1.83259571, 2.87979327, 1.83259571, 1.83259571, 1.83259571, 3.40339204, 3.66519143,
    3.40339204, 3.40339204, 3.14159265, 3.92699082, 3.92699082, 2.35619449, 2.35619449, 3.92699082, 3.92699082,
    3.92699082, 3.66519143, 3.66519143, 3.66519143, 2.61799388, 3.66519143, 1.57079633, 1.57079633, 1.57079633,
-   1.04719755, 1.04719755, 1.04719755, 1.04719755, 1.57079633];//1param acc
+   1.04719755, 1.04719755, 1.04719755, 1.04719755, 1.57079633];//Option 2 sequence, or "MP" sequence 
    
    // Create file
-   let _file2 = File::create("./MP_acc_multiparamBayesianpriors/test.txt").unwrap();
+   let _file2 = File::create("./test_jitter/jitter.txt").unwrap();
 
    // Open file
    let file = OpenOptions::new()
       .write(true)
       .append(true)
-      .open("./MP_acc_multiparamBayesianpriors/test.txt").unwrap();
+      .open("./test_jitter/jitter.txt").unwrap();
 
    // Wrap file in Mutex for thread safety
    let file = Mutex::new(file);
 
-   // We multithread iterator over acceleration, but not lattice depth. 
-   // Sufficient for my laptop/desktop.
-   println!("Generating multiparam Bayesian priors for SP sequence");
 
-   let bar = ProgressBar::new(500 );
-   bar.set_style(ProgressStyle::with_template("[{elapsed_precise}] {wide_bar:100.cyan/blue} {pos:>7}/{len:7} {msg}")
+   println!("Testing jitter");
+
+   let bar = ProgressBar::new(100 );
+   bar.set_style(ProgressStyle::with_template("[{elapsed_precise}] {bar:100.cyan/blue} {pos:>7}/{len:7} {msg}")
     .unwrap()
     .progress_chars("##-"));
 
-   let _sum : Vec<f64> = (0..501).into_par_iter().map(|x| {
-     // let acc = -0.00225 + (0.00225*2.0 * x as f64)/(1000 as f64);
-     let acc = -0.0225 + (0.0225*2.0 * x as f64)/(500 as f64);
-     for y in 0..51 {
-         let latdep : f64 =  9.0 + (2.0* y as f64)/(50 as f64);
-      
+   let latdep : f64 =  10.0;      let acc = 0.0;
+   let mut latt = Lattice::new(acc, latdep);
+
+   let mut sign = TOGGLE_INIT;
+   for ampl in &latt_shaking{
+       latt.step( *ampl*sign, FREQ);
+       sign *= -1.0;
+   };
+
+   let out = latt.get_psi();
+   let momentum_i: Vec<Complex64> = (out.conjugate().component_mul(&out)).data.into();
+   let momentum_0 : Vec<f64> = momentum_i.iter().map(|&m| m.re).collect();
+   let mut s = String::new();
+   let jsd_trivial = jenson_shannon_divergence(momentum_0.clone(), momentum_0.clone() );
+
+   s =  s + &format!("0.0\t{jsd_trivial}\t");
+   s =  s + &format!("{acc}\t{latdep}\t");
 
 
-         let mut latt = Lattice::new(acc, latdep);
+   for num in &momentum_0 {
+      s.push_str(&num.to_string());
+      s.push_str("\t");
+   }
+   s.push_str("\n");
+
+   file.lock()
+   .unwrap()
+   .write_all( s.as_bytes())
+   .unwrap();
+
+   // We multithread iterator over acceleration, but not lattice depth. 
+   // Sufficient for my laptop/desktop.
+   let _sum : Vec<f64> = (1..=100).into_par_iter().map(|x| {
+         let jitter_sigma = x as f64/100.0; 
+         let mut jittery_latt = JitteryLattice::new( acc, latdep, jitter_sigma);
 
          let mut sign = TOGGLE_INIT;
          for ampl in &latt_shaking{
-             latt.step( *ampl*sign, FREQ);
+             jittery_latt.step( *ampl*sign, FREQ);
              sign *= -1.0;
          };
 
-         let out = latt.get_psi();
+         let out = jittery_latt.get_psi();
          let momentum_i: Vec<Complex64> = (out.conjugate().component_mul(&out)).data.into();
          let momentum : Vec<f64> = momentum_i.iter().map(|&m| m.re).collect();
          let mut s = String::new();
-         s =  s + &format!("{x}\t{y}\t");
+
+         let jsd = jenson_shannon_divergence(momentum_0.clone(), momentum.clone());
+         s =  s + &format!("{jitter_sigma}\t{jsd}\t");
          s =  s + &format!("{acc}\t{latdep}\t");
 
 
@@ -94,10 +140,8 @@ fn main() {
          .write_all( s.as_bytes())
          .unwrap();
 
-         
-      }
       
-      bar.inc(1); acc}).collect();
+      bar.inc(1); x as f64}).collect();
 
 
    
