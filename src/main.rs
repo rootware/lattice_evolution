@@ -32,73 +32,15 @@ const TOGGLE_INIT : f64 = 1.0;
 /// [acc index, lattice index, acceleration $a$ , lattice depth $V_0$ , P(p|a,V_0$ ]
 fn main() {
 
-   // hard code our shaking sequence
-   let latt_shaking : Vec<f64> = vec![1.83259571, 0., 1.83259571, 2.87979327, 1.83259571, 1.83259571, 1.83259571, 3.40339204, 3.66519143,
-   3.40339204, 3.40339204, 3.14159265, 3.92699082, 3.92699082, 2.35619449, 2.35619449, 3.92699082, 3.92699082,
-   3.92699082, 3.66519143, 3.66519143, 3.66519143, 2.61799388, 3.66519143, 1.57079633, 1.57079633, 1.57079633,
-   1.04719755, 1.04719755, 1.04719755, 1.04719755, 1.57079633];//1param acc
-   
-   // Create file
-   let _file2 = File::create("./MP_acc_multiparamBayesianpriors/test.txt").unwrap();
-
-   // Open file
-   let file = OpenOptions::new()
-      .write(true)
-      .append(true)
-      .open("./MP_acc_multiparamBayesianpriors/test.txt").unwrap();
-
-   // Wrap file in Mutex for thread safety
-   let file = Mutex::new(file);
-
-   // We multithread iterator over acceleration, but not lattice depth. 
-   // Sufficient for my laptop/desktop.
-   println!("Generating multiparam Bayesian priors for SP sequence");
-
-   let bar = ProgressBar::new(500 );
-   bar.set_style(ProgressStyle::with_template("[{elapsed_precise}] {wide_bar:100.cyan/blue} {pos:>7}/{len:7} {msg}")
-    .unwrap()
-    .progress_chars("##-"));
-
-   let _sum : Vec<f64> = (0..501).into_par_iter().map(|x| {
-     // let acc = -0.00225 + (0.00225*2.0 * x as f64)/(1000 as f64);
-     let acc = -0.0225 + (0.0225*2.0 * x as f64)/(500 as f64);
-     for y in 0..51 {
-         let latdep : f64 =  9.0 + (2.0* y as f64)/(50 as f64);
-      
-
-
-         let mut latt = Lattice::new(acc, latdep);
-
-         let mut sign = TOGGLE_INIT;
-         for ampl in &latt_shaking{
-             latt.step( *ampl*sign, FREQ);
-             sign *= -1.0;
-         };
-
-         let out = latt.get_psi();
-         let momentum_i: Vec<Complex64> = (out.conjugate().component_mul(&out)).data.into();
-         let momentum : Vec<f64> = momentum_i.iter().map(|&m| m.re).collect();
-         let mut s = String::new();
-         s =  s + &format!("{x}\t{y}\t");
-         s =  s + &format!("{acc}\t{latdep}\t");
-
-
-         for num in momentum {
-            s.push_str(&num.to_string());
-            s.push_str("\t");
-         }
-         s.push_str("\n");
-
-         file.lock()
-         .unwrap()
-         .write_all( s.as_bytes())
-         .unwrap();
-
-         
+   for i in (0..11) {
+      for j in (0..11) {
+         let acc = -0.0225 + (0.0225*2.0 * j as f64)/(10.0 as f64);
+         let latt_depth = 9.0+ (i as f64 *2.0)/10.0;
+         let lattice = Lattice::new(acc, latt_depth);
+         let tuple = (acc, latt_depth, lattice.get_hamiltonian().symmetric_eigen().eigenvalues[1]);
+         println!("{:?}", tuple );
       }
-      
-      bar.inc(1); acc}).collect();
-
+   }
 
    
 }
