@@ -4,19 +4,15 @@
     "type": "split",
     "children": [
       {
-        "id": "8f7152d7dda7031a",
+        "id": "c80d68d646d7bee6",
         "type": "tabs",
         "children": [
           {
-            "id": "ff7affefcd8d787a",
+            "id": "296e1941b8844e66",
             "type": "leaf",
             "state": {
-              "type": "markdown",
-              "state": {
-                "file": "Obsidian Notes/Bayesian/Bayesian.md",
-                "mode": "source",
-                "source": false
-              }
+              "type": "empty",
+              "state": {}
             }
           }
         ]
@@ -85,7 +81,6 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Obsidian Notes/Bayesian/Bayesian.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -102,7 +97,6 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "Obsidian Notes/Bayesian/Bayesian.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -124,9 +118,7 @@
             "type": "leaf",
             "state": {
               "type": "outline",
-              "state": {
-                "file": "Obsidian Notes/Bayesian/Bayesian.md"
-              }
+              "state": {}
             }
           }
         ]
@@ -146,8 +138,12 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "ff7affefcd8d787a",
+  "active": "296e1941b8844e66",
   "lastOpenFiles": [
+    "Obsidian Notes/DAMOP abstracts draft.md",
+    "README.md",
+    "Obsidian Notes/Future Implementation and Possible Issues.md",
+    "Obsidian Notes/Bayesian/Bayesian.md",
     "Data/Rust_Runs/Option2_Rust_Run2/combined.pdf",
     "Data/Rust_Runs/Option2_Rust_Run2/combined.png",
     "LICENSE",
@@ -160,11 +156,9 @@
     "Python/JS_acc.png",
     "Data/Rust_Runs/Option2_only_acc_Bayesian/Option2_1onlyacc_Bayesian_2.pdf",
     "Python/Option2_1onlyacc_Bayesian_2.pdf",
-    "Python/Option2_1onlyacc_Bayesian.pdf",
     "Pasted image 20240114161047.png",
     "Pasted image 20240114160936.png",
     "Pasted image 20240114160716.png",
-    "Obsidian Notes/Bayesian/Bayesian.md",
     "Pasted image 20240114160052.png",
     "Pasted image 20240114160151.png",
     "Pasted image 20240114155927.png",

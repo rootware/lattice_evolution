@@ -4,31 +4,18 @@
     "type": "split",
     "children": [
       {
-        "id": "fe283781a49f060e",
+        "id": "abca9e4b157e1c17",
         "type": "tabs",
         "children": [
           {
-            "id": "7db6b9ef5c14ebb5",
+            "id": "d8dc9c69e44effa6",
             "type": "leaf",
             "state": {
               "type": "empty",
               "state": {}
             }
-          },
-          {
-            "id": "c1858535408bea7a",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "Jenson Shannon Divergence/Jenson-Shannon Detailed Notes.md",
-                "mode": "source",
-                "source": false
-              }
-            }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "vertical"
@@ -94,7 +81,6 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Jenson Shannon Divergence/Jenson-Shannon Detailed Notes.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -111,7 +97,6 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "Jenson Shannon Divergence/Jenson-Shannon Detailed Notes.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -133,9 +118,7 @@
             "type": "leaf",
             "state": {
               "type": "outline",
-              "state": {
-                "file": "Jenson Shannon Divergence/Jenson-Shannon Detailed Notes.md"
-              }
+              "state": {}
             }
           }
         ]
@@ -155,10 +138,14 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "c1858535408bea7a",
+  "active": "d8dc9c69e44effa6",
   "lastOpenFiles": [
-    "JSD Results section.md",
     "Jenson Shannon Divergence/Jenson-Shannon Detailed Notes.md",
+    "DAMOP abstracts draft.md",
+    "Future Implementation and Possible Issues.md",
+    "To-Do's and Possible Issues.md",
+    "Untitled.md",
+    "JSD Results section.md",
     "Welcome.md",
     "create a link.md",
     "2024-01-12.md",
