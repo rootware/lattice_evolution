@@ -4,11 +4,11 @@
     "type": "split",
     "children": [
       {
-        "id": "c80d68d646d7bee6",
+        "id": "55fb564524c49641",
         "type": "tabs",
         "children": [
           {
-            "id": "296e1941b8844e66",
+            "id": "48a2e9790189c801",
             "type": "leaf",
             "state": {
               "type": "empty",
@@ -138,14 +138,25 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "296e1941b8844e66",
+  "active": "48a2e9790189c801",
   "lastOpenFiles": [
+    "Python/combined_g.svg",
+    "Data/Rust_Runs/Option2_FinerFit_98CFI/JS_finerfit_g.png",
+    "Python/JS_finerfit_g.png",
+    "Python/2dfringes_g.png",
+    "Data/Rust_Runs/Option2_Rust_Run2/1064 units/JS_cross_g.png",
+    "Python/JS_cross_g.png",
+    "Python/JS_cross.png",
+    "Data/Rust_Runs/Option2_Rust_Run2/1064 units/JS_latt_g.png",
+    "Data/Rust_Runs/Option2_Rust_Run2/1064 units/JS_acc_g.png",
+    "Python/JS_latt_g.png",
+    "Python/JS_latt.png",
+    "Data/Rust_Runs/Option2_Rust_Run2/1064 units",
     "Obsidian Notes/DAMOP abstracts draft.md",
     "README.md",
     "Obsidian Notes/Future Implementation and Possible Issues.md",
     "Obsidian Notes/Bayesian/Bayesian.md",
     "Data/Rust_Runs/Option2_Rust_Run2/combined.pdf",
-    "Data/Rust_Runs/Option2_Rust_Run2/combined.png",
     "LICENSE",
     "Data/Rust_Runs/Option2_FinerFit_98CFI/DecayofCFIfit.pdf",
     "Data/Rust_Runs/Option2_FinerFit_98CFI/Decayofsensitivityfit.pdf",
@@ -153,18 +164,8 @@
     "Python/Decayofsensitivityfit.pdf",
     "Python/DecayofCFIfit.pdf",
     "Python/finerfit_Fitgrpah.pdf",
-    "Python/JS_acc.png",
     "Data/Rust_Runs/Option2_only_acc_Bayesian/Option2_1onlyacc_Bayesian_2.pdf",
-    "Python/Option2_1onlyacc_Bayesian_2.pdf",
-    "Pasted image 20240114161047.png",
-    "Pasted image 20240114160936.png",
-    "Pasted image 20240114160716.png",
-    "Pasted image 20240114160052.png",
-    "Pasted image 20240114160151.png",
-    "Pasted image 20240114155927.png",
     "Obsidian Notes/Jenson Shannon Divergence/Jenson-Shannon Detailed Notes.md",
-    "Obsidian Notes/Jenson Shannon Divergence/JSD Results section.md",
-    "Obsidian Notes/Jenson Shannon Divergence/Pasted image 20240111094951.png",
-    "Obsidian Notes/Jenson Shannon Divergence/Pasted image 20240111094433.png"
+    "Obsidian Notes/Jenson Shannon Divergence/JSD Results section.md"
   ]
 }

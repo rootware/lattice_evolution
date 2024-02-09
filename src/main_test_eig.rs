@@ -32,8 +32,8 @@ const TOGGLE_INIT : f64 = 1.0;
 /// [acc index, lattice index, acceleration $a$ , lattice depth $V_0$ , P(p|a,V_0$ ]
 fn main() {
 
-   for i in (0..11) {
-      for j in (0..11) {
+   for i in 0..11 {
+      for j in 0..11 {
          let acc = -0.0225 + (0.0225*2.0 * j as f64)/(10.0 as f64);
          let latt_depth = 9.0+ (i as f64 *2.0)/10.0;
          let lattice = Lattice::new(acc, latt_depth);
@@ -41,6 +41,7 @@ fn main() {
          println!("{:?}", tuple );
       }
    }
+
 
    
 }
