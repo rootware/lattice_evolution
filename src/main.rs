@@ -39,7 +39,7 @@ fn main() {
    1.04719755, 1.04719755, 1.04719755, 1.04719755, 1.57079633];//1param acc
    
    // Create file
-   let _file2 = File::create("./dynamic_range/test_2.txt").unwrap();
+   let _file2 = File::create("./dynamic_range/test.txt").unwrap();
 
    // Open file
    let file = OpenOptions::new()

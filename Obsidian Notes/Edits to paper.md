@@ -15,6 +15,7 @@ On SPvMP,
 - Check in with John about scheduling for Thursday/Friday for meeting?
 - Fix bayesian plots to bein $g$..
 - add lattice JSD plots
-- Add plot showing $\phi_a = g k_L T^2$ wrap around
+- Add plot showing $\phi_a = a k_L T^2$ wrap around, which should happen when $\phi_a = 2\pi n$, which yields $a=0.08221969228087173 \omega_r v_r$. In 1064nm laser, this turns out to be $a=0.46080207078695073g$ .
+  
 
   
