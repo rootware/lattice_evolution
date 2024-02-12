@@ -39,13 +39,13 @@ fn main() {
    3.92699082, 3.66519143, 3.66519143, 3.66519143, 2.61799388, 3.66519143, 1.57079633, 1.57079633, 1.57079633,
    1.04719755, 1.04719755, 1.04719755, 1.04719755, 1.57079633];//1param acc
    // Create file
-   let _file2 = File::create("./testing_cfi/test_longer.txt").unwrap();
+   let _file2 = File::create("./testing_cfi/test_longer_withqfi.txt").unwrap();
 
    // Open file
    let file = OpenOptions::new()
       .write(true)
       .append(true)
-      .open("./testing_cfi/test_longer.txt").unwrap();
+      .open("./testing_cfi/test_longer_withqfi.txt").unwrap();
 
    // Wrap file in Mutex for thread safety
    let file = Mutex::new(file);
@@ -83,7 +83,7 @@ fn main() {
          };
 
 
-         let result = vec![latt.acc_cfi() ];
+         let result = vec![latt.acc_cfi() , latt.acc_qfi()];
          let mut s = String::new();
          s =  s + &format!("{x}\t{y}\t");
          s =  s + &format!("{acc}\t{latdep}\t");
