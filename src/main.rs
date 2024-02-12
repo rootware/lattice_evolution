@@ -54,14 +54,20 @@ fn main() {
    // Sufficient for my laptop/desktop.
    println!("Testing CFI calculations using the augmented state method");
 
-   let bar = ProgressBar::new(100 );
+   let no_of_runs : u64 = 501; 
+
+   let bar = ProgressBar::new(no_of_runs );
    bar.set_style(ProgressStyle::with_template("[{elapsed_precise}] {wide_bar:100.cyan/blue} {pos:>7}/{len:7} {msg}")
     .unwrap()
     .progress_chars("##-"));
 
-   let _sum : Vec<f64> = (0..101).into_par_iter().map(|x| {
+   let tof = PI/11.5 *32.0;
+   let f_mz = ( 4.0 * 2.0 * tof.powi(2) ).powi(2)/4.0;
+   println!("{}", f_mz);
+   
+   let _sum : Vec<f64> = (0..no_of_runs).into_par_iter().map(|x| {
      // let acc = -0.00225 + (0.00225*2.0 * x as f64)/(1000 as f64);
-     let acc = - 0.0225 + ( 0.0225*2.0 * x as f64)/(100 as f64);
+     let acc = -0.0225 + ( 0.0225*2.0 * x as f64)/( (no_of_runs-1) as f64);
      for y in 0..1 {
         // let latdep : f64 =  9.0 + (2.0* y as f64)/(50 as f64);
         let latdep : f64 =  10.0;
@@ -76,9 +82,8 @@ fn main() {
              sign *= -1.0;
          };
 
-         let tof = PI/11.5 *32.0;
-         let f_mz = ( 4.0 * 2.0 * tof.powi(2) ).powi(2)/4.0;
-         let result = vec![latt.acc_cfi() / f_mz *4.0];
+
+         let result = vec![latt.acc_cfi() ];
          let mut s = String::new();
          s =  s + &format!("{x}\t{y}\t");
          s =  s + &format!("{acc}\t{latdep}\t");
@@ -102,16 +107,16 @@ fn main() {
 
 
       // test my cfi module
-      let dPsi = DVector::from_vec( vec! [ Complex64::new( 0.5, 0.0), Complex64::new(0.2,0.3)]) ;
+      let d_psi = DVector::from_vec( vec! [ Complex64::new( 0.5, 0.0), Complex64::new(0.2,0.3)]) ;
       let psi = DVector::from_vec( vec! [ Complex64::new( 0.9, 0.1), Complex64::new(0.2,0.3)]) ;
 
-      let p_a : f64 = dPsi.iter().zip(psi.iter()).map(|(&dp, &p)|
+      let p_a : f64 = d_psi.iter().zip(psi.iter()).map(|(&dp, &p)|
       { (2.0*(dp*p.conj()).re ).powi(2)/( p.norm_sqr())}
       ).collect::<Vec<f64>>().iter().sum();
 
       println!( "{p_a}");
 
-      let mut byhand = (2.0*( 0.5*0.9))*(2.0*( 0.5*0.9))/(0.81+0.01) + (2.0*( 0.2*0.2 + 0.3*0.3))*(2.0*( 0.2*0.2 + 0.3*0.3)) /(0.04+0.09);
+      let byhand = (2.0*( 0.5*0.9))*(2.0*( 0.5*0.9))/(0.81+0.01) + (2.0*( 0.2*0.2 + 0.3*0.3))*(2.0*( 0.2*0.2 + 0.3*0.3)) /(0.04+0.09);
       println!("{byhand}");
 
    
