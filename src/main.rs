@@ -39,13 +39,13 @@ fn main() {
    3.92699082, 3.66519143, 3.66519143, 3.66519143, 2.61799388, 3.66519143, 1.57079633, 1.57079633, 1.57079633,
    1.04719755, 1.04719755, 1.04719755, 1.04719755, 1.57079633];//1param acc
    // Create file
-   let _file2 = File::create("./testing_cfi/test.txt").unwrap();
+   let _file2 = File::create("./testing_cfi/test_longer.txt").unwrap();
 
    // Open file
    let file = OpenOptions::new()
       .write(true)
       .append(true)
-      .open("./testing_cfi/test.txt").unwrap();
+      .open("./testing_cfi/test_longer.txt").unwrap();
 
    // Wrap file in Mutex for thread safety
    let file = Mutex::new(file);
@@ -54,7 +54,7 @@ fn main() {
    // Sufficient for my laptop/desktop.
    println!("Testing CFI calculations using the augmented state method");
 
-   let no_of_runs : u64 = 501; 
+   let no_of_runs : u64 = 1000; 
 
    let bar = ProgressBar::new(no_of_runs );
    bar.set_style(ProgressStyle::with_template("[{elapsed_precise}] {wide_bar:100.cyan/blue} {pos:>7}/{len:7} {msg}")
@@ -67,7 +67,7 @@ fn main() {
    
    let _sum : Vec<f64> = (0..no_of_runs).into_par_iter().map(|x| {
      // let acc = -0.00225 + (0.00225*2.0 * x as f64)/(1000 as f64);
-     let acc = -0.0225 + ( 0.0225*2.0 * x as f64)/( (no_of_runs-1) as f64);
+     let acc = -1.0 + ( 1.0*2.0 * x as f64)/( (no_of_runs-1) as f64);
      for y in 0..1 {
         // let latdep : f64 =  9.0 + (2.0* y as f64)/(50 as f64);
         let latdep : f64 =  10.0;
