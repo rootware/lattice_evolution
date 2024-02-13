@@ -64,7 +64,7 @@ class Sequence2param:
 
             
 
-    def BayesianUpdating(self, totalmeasurements: int, recordstep: int, totalrecords: int, save_measurement: bool):
+    def BayesianUpdating(self, totalmeasurements: int, recordstep: int, totalrecords: int, save_measurement: bool, outcome_file: str):
         """
         @save_measurement saves the generated outcomes so results can be replicated
         """
@@ -78,7 +78,11 @@ class Sequence2param:
         P_simulated = P_actual; #No errors
 
         Runs=totalmeasurements; # How many simulated data do we want
-        outcomes = np.random.default_rng().choice(PossibleOutcomes,size=Runs, p = P_simulated);
+        if outcome_file == "":
+            outcomes = np.random.default_rng().choice(PossibleOutcomes,size=Runs, p = P_simulated);
+        else:
+            outcomes = np.loadtxt(self.working_directory + outcome_file).astype(np.int64);
+        
         if save_measurement == True:
             np.savetxt(self.working_directory+str(len(outcomes))+".txt", outcomes);
         
