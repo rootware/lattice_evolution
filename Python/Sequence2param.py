@@ -102,7 +102,7 @@ class Sequence2param:
                 PaVprior/=np.sum(PaVprior)
 
             counter+=1;
-            if counter % recordstep and counter < totalrecords:
+            if counter % recordstep == 0 and counter < totalrecords: #I forgot to add recordstep == 0 before
                 plotPaV=np.append(plotPaV,[PaVprior], axis=0); 
 
         return plotPaV;
