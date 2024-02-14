@@ -12,3 +12,9 @@ The relative phase due to acceleration accrues as $\phi_a = 2ap_0 T_\pi^2 /\hbar
  $$v_r \omega_r^{-1} k_L = \left( \frac{\hbar k_L}{m} \right)\left(\frac{2m}{\hbar k_L^2}\right)\frac{1}{\hbar} =2 $$
  - So $$\tilde{\phi_a} = 2 \tilde{a} n \tilde{T_\pi}^2 *2= \tilde{a}n \tilde{\mathcal{T}}^2 $$where $\mathcal{T}$ is total time of sequence, or $\mathcal{T}= \frac{\pi N_\phi}{\omega_0}$ .
  - In terms of periodicity, we therefore expect this phase to wrap around every $2\pi s$, where $s\in \mathbb{N}$ is a natural no. This yields the periodicity as $$\tilde{a}_s = \frac{2\pi}{n \mathcal{T}^2}=0.020554923$$ or $a = 0.11520051769673768 g$ .
+
+
+## Differentiating Probability distributions
+
+$$\partial_a P(p) = \partial_a |\psi(p)|^2 =\partial_a \left(\braket{\psi|p}\braket{p|\psi} \right)= (\partial_a \braket{\psi|p}) \braket{p|\psi} + \braket{\psi|p} (\partial_a \braket{p|\psi} )= 2 \mathrm{Re}\left[\braket{\psi|p} \partial_a\braket{p|\psi}\right]$$
+$$I_{aa} = \sum_p \frac{1}{P(p)} 4 \left(\mathrm{Re}\left[\braket{\psi|p} \partial_a\braket{p|\psi}\right]\right)^2$$

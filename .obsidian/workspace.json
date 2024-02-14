@@ -11,8 +11,12 @@
             "id": "1c9658b4e4f28650",
             "type": "leaf",
             "state": {
-              "type": "empty",
-              "state": {}
+              "type": "markdown",
+              "state": {
+                "file": "Obsidian Notes/CFI notes and quick numerical values for reference.md",
+                "mode": "source",
+                "source": false
+              }
             }
           }
         ]
@@ -81,6 +85,7 @@
             "state": {
               "type": "backlink",
               "state": {
+                "file": "Obsidian Notes/CFI notes and quick numerical values for reference.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -97,6 +102,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
+                "file": "Obsidian Notes/CFI notes and quick numerical values for reference.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -119,7 +125,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Billing.md"
+                "file": "Obsidian Notes/CFI notes and quick numerical values for reference.md"
               }
             }
           }
@@ -140,25 +146,26 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "1ef3fb08b9e047be",
+  "active": "1c9658b4e4f28650",
   "lastOpenFiles": [
+    "target/release/deps/lattice_evolution-b1be631cd69a37d4",
+    "target/release/deps/lattice_evolution-b1be631cd69a37d4.lattice_evolution.5d1f6a527749904f-cgu.01.rcgu.o",
+    "target/release/deps/lattice_evolution-b1be631cd69a37d4.lattice_evolution.5d1f6a527749904f-cgu.06.rcgu.o",
+    "target/release/deps/lattice_evolution-b1be631cd69a37d4.lattice_evolution.5d1f6a527749904f-cgu.08.rcgu.o",
+    "target/release/deps/lattice_evolution-b1be631cd69a37d4.lattice_evolution.5d1f6a527749904f-cgu.03.rcgu.o",
+    "target/release/deps/lattice_evolution-b1be631cd69a37d4.lattice_evolution.5d1f6a527749904f-cgu.05.rcgu.o",
+    "target/release/deps/lattice_evolution-b1be631cd69a37d4.lattice_evolution.5d1f6a527749904f-cgu.14.rcgu.o",
+    "target/release/deps/lattice_evolution-b1be631cd69a37d4.lattice_evolution.5d1f6a527749904f-cgu.04.rcgu.o",
+    "target/release/deps/lattice_evolution-b1be631cd69a37d4.lattice_evolution.5d1f6a527749904f-cgu.13.rcgu.o",
+    "target/release/deps/lattice_evolution-b1be631cd69a37d4.lattice_evolution.5d1f6a527749904f-cgu.07.rcgu.o",
+    "target/release/deps/lattice_evolution-b1be631cd69a37d4.lattice_evolution.5d1f6a527749904f-cgu.10.rcgu.o",
+    "Obsidian Notes/Edits to paper.md",
     "Billing.md",
-    "Data/Rust_Runs/testing_cfi/test_longer_withqfi.txt",
-    "Data/Rust_Runs/testing_cfi/test_longer.txt",
-    "Data/Rust_Runs/testing_cfi/test.txt",
     "Data/Rust_Runs/testing_cfi/cfivsa.png",
     "Data/Rust_Runs/testing_cfi/JSandCFIva.png",
-    "Data/Rust_Runs/testing_cfi",
     "Obsidian Notes/DAMOP abstracts draft.md",
     "Obsidian Notes/CFI notes and quick numerical values for reference.md",
     "Obsidian Notes/Future Implementation and Possible Issues.md",
-    "Obsidian Notes/Edits to paper.md",
-    "target/debug/incremental/lattice_evolution-1neprmq8s0wnm/s-gt9x3p18r2-hq5uab-e2iubx6iffqbdj1lnmqhinx9r/work-products.bin",
-    "target/debug/incremental/lattice_evolution-1neprmq8s0wnm/s-gt9x3p18r2-hq5uab-e2iubx6iffqbdj1lnmqhinx9r/query-cache.bin",
-    "target/debug/incremental/lattice_evolution-1neprmq8s0wnm/s-gt9x3p18r2-hq5uab-e2iubx6iffqbdj1lnmqhinx9r/dep-graph.bin",
-    "target/debug/incremental/lattice_evolution-1neprmq8s0wnm/s-gt9x3p18r2-hq5uab-e2iubx6iffqbdj1lnmqhinx9r",
-    "target/debug/incremental/lattice_evolution-3prf69fn72ksd/s-gt9x3p18ko-1voqige-4r25fxk6108c95qpybx94f656/work-products.bin",
-    "target/debug/incremental/lattice_evolution-3prf69fn72ksd/s-gt9x3p18ko-1voqige-4r25fxk6108c95qpybx94f656/query-cache.bin",
     "Data/Rust_Runs/Option2_Rust_Run2/combined_g_new.png",
     "Data/Rust_Runs/Option2_Rust_Run2/expJS_acc_50measurements.png",
     "Data/Rust_Runs/2param_lattice/combined.svg",

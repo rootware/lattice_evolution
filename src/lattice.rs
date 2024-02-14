@@ -1,4 +1,4 @@
-use num_complex::Complex64;
+use num_complex::{Complex, Complex64};
 use nalgebra::{   DMatrix, DVector};
 const N_STATES : usize = 11; // Size of matrices
 use std::f64::consts::PI;
@@ -24,7 +24,8 @@ pub struct Lattice {
     h2: DMatrix<Complex64>, 
     /// current wavefunction of wavepacket moving through lattice
     psi: DVector<Complex64> ,
-    dpsi_a: DVector<Complex64>
+    dpsi_a: DVector<Complex64>,
+    dpsi_v: DVector<Complex64>
 }
 
 impl Lattice {
@@ -120,7 +121,7 @@ impl Lattice {
 
     /// update_d is essentially the derivative to the state derivative at time t$
     /// It's given by $-i*H*|\psi> +i*\hat{p}t$
-    pub fn update_d(&self, state_deriv: DVector<Complex64>, state: DVector<Complex64>,amplitude:f64, omega: f64, t: f64 ) -> DVector<Complex64> {
+    pub fn update_da(&self, state_deriv: DVector<Complex64>, state: DVector<Complex64>,amplitude:f64, omega: f64, t: f64 ) -> DVector<Complex64> {
         let phi = amplitude*f64::sin(omega*t);
         let hamiltonian = &self.h0 + &self.h1*Complex64::from(f64::sin(phi)) - &self.h2*Complex64::from(f64::cos(phi));
 
@@ -133,7 +134,17 @@ impl Lattice {
         // Is there an easier way to convert the f64 diagonal into a Complex valued array?
 
 
-        hamiltonian*state_deriv*Complex64::new(0.0,-1.0) + diagonal.component_mul(&state)*Complex64::new( 0.0, self.time +t)
+        hamiltonian*state_deriv*Complex64::new(0.0,-1.0) + diagonal.component_mul(&state)*Complex64::new( 0.0, 2.0*(self.time +t) )
+    }
+
+    pub fn update_d_v(&self, state_deriv: DVector<Complex64>, state: DVector<Complex64>,amplitude:f64, omega: f64, t: f64 ) -> DVector<Complex64> {
+        let phi = amplitude*f64::sin(omega*t);
+        let ham_shaking = &self.h1*Complex64::from(f64::sin(phi)) - &self.h2*Complex64::from(f64::cos(phi));
+        let hamiltonian = &self.h0 + &ham_shaking;
+
+
+
+        &hamiltonian*state_deriv*Complex64::new(0.0,-1.0) + &ham_shaking*state/Complex::new(0.0, -1.0/self.depth)
     }
 
     
@@ -144,13 +155,19 @@ impl Lattice {
         let k3 = self.update(self.psi.clone() + &k2*Complex64::from(dt/2.0) , amplitude, omega, t+dt/2.0);
         let k4 = self.update(self.psi.clone() + &k3*Complex64::from(dt) , amplitude, omega, t+dt);
 
-        let k1_d = self.update_d(self.dpsi_a.clone(), self.psi.clone(), amplitude, omega, t);
-        let k2_d = self.update_d(self.dpsi_a.clone() + &k1_d*Complex64::from(dt/2.0) ,self.psi.clone()+ &k1*Complex64::from(dt/2.0), amplitude, omega, t+dt/2.0);
-        let k3_d = self.update_d(self.dpsi_a.clone() + &k2_d*Complex64::from(dt/2.0) , self.psi.clone()+&k2*Complex64::from(dt/2.0) ,amplitude, omega, t+dt/2.0);
-        let k4_d = self.update_d(self.dpsi_a.clone() + &k3_d*Complex64::from(dt) , self.psi.clone()+&k3*Complex64::from(dt),amplitude, omega, t+dt);
+        let k1_da = self.update_da(self.dpsi_a.clone(), self.psi.clone(), amplitude, omega, t);
+        let k2_da= self.update_da(self.dpsi_a.clone() + &k1_da*Complex64::from(dt/2.0) ,self.psi.clone()+ &k1*Complex64::from(dt/2.0), amplitude, omega, t+dt/2.0);
+        let k3_da = self.update_da(self.dpsi_a.clone() + &k2_da*Complex64::from(dt/2.0) , self.psi.clone()+&k2*Complex64::from(dt/2.0) ,amplitude, omega, t+dt/2.0);
+        let k4_da = self.update_da(self.dpsi_a.clone() + &k3_da*Complex64::from(dt) , self.psi.clone()+&k3*Complex64::from(dt),amplitude, omega, t+dt);
+
+        let k1_d_v = self.update_d_v(self.dpsi_v.clone(), self.psi.clone(), amplitude, omega, t);
+        let k2_d_v= self.update_d_v(self.dpsi_v.clone() + &k1_d_v*Complex64::from(dt/2.0) ,self.psi.clone()+ &k1*Complex64::from(dt/2.0), amplitude, omega, t+dt/2.0);
+        let k3_d_v = self.update_d_v(self.dpsi_v.clone() + &k2_d_v*Complex64::from(dt/2.0) , self.psi.clone()+&k2*Complex64::from(dt/2.0) ,amplitude, omega, t+dt/2.0);
+        let k4_d_v = self.update_d_v(self.dpsi_v.clone() + &k3_d_v*Complex64::from(dt) , self.psi.clone()+&k3*Complex64::from(dt),amplitude, omega, t+dt);
 
         self.psi = &self.psi + ( k1 + k2*Complex64::from(2.0) + k3*Complex64::from(2.0) + k4)*Complex64::from(dt/6.0);
-        self.dpsi_a = &self.dpsi_a + ( k1_d + k2_d*Complex64::from(2.0) + k3_d*Complex64::from(2.0) + k4_d)*Complex64::from(dt/6.0);
+        self.dpsi_a = &self.dpsi_a + ( k1_da + k2_da*Complex64::from(2.0) + k3_da*Complex64::from(2.0) + k4_da)*Complex64::from(dt/6.0);
+        self.dpsi_v = &self.dpsi_v + ( k1_d_v + k2_d_v*Complex64::from(2.0) + k3_d_v*Complex64::from(2.0) + k4_d_v)*Complex64::from(dt/6.0);
 
         self.accelerate(-MASS*self.g*dt);
     }
@@ -205,7 +222,8 @@ impl Lattice {
             h1 ,
             h2 ,
             psi: psitemp,
-            dpsi_a: DVector::from_element( N_STATES,Complex64::new(0.0,0.0))        }
+            dpsi_a: DVector::from_element( N_STATES,Complex64::new(0.0,0.0)),
+            dpsi_v: DVector::from_element( N_STATES,Complex64::new(0.0,0.0))    }
     }
 }
 
@@ -227,6 +245,24 @@ impl Lattice {
                     ).collect::<Vec<f64>>().iter().sum();
 
         p_a
+    }
+
+    pub fn depth_qfi(&self)-> f64 {
+        let dpsi_v_c = self.dpsi_v.clone();
+        let psi_c = self.psi.clone();
+
+        4.0 * ( dpsi_v_c.conjugate().dot(&dpsi_v_c) - (dpsi_v_c.conjugate().dot(&psi_c) ).norm().powi(2)    ).re
+    }
+
+    pub fn depth_cfi(&self) -> f64 {
+        let dpsi_v_c = self.dpsi_v.clone();
+        let psi_c = self.psi.clone();
+
+        let p_v : f64 = dpsi_v_c.iter().zip(psi_c.iter()).map(|(&dp, &p)|
+                    { (2.0*(dp*p.conj()).re ).powi(2)/( p.norm_sqr() )}
+                    ).collect::<Vec<f64>>().iter().sum();
+
+        p_v
 
 
     }

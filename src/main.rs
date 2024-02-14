@@ -1,8 +1,9 @@
 pub mod lattice;
+use nalgebra::DVector;
 use num_complex::Complex64;
 use lattice::Lattice;
 use rayon::prelude::*;
-
+use std::f64::consts::PI;
 
 use std::fs::OpenOptions;
 use std::fs::File;
@@ -33,26 +34,29 @@ const TOGGLE_INIT : f64 = 1.0;
 fn main() {
 
    // hard code our shaking sequence
-   let latt_shaking : Vec<f64> = vec![1.83259571, 0., 1.83259571, 2.87979327, 1.83259571, 1.83259571, 1.83259571, 3.40339204, 3.66519143,
-   3.40339204, 3.40339204, 3.14159265, 3.92699082, 3.92699082, 2.35619449, 2.35619449, 3.92699082, 3.92699082,
-   3.92699082, 3.66519143, 3.66519143, 3.66519143, 2.61799388, 3.66519143, 1.57079633, 1.57079633, 1.57079633,
-   1.04719755, 1.04719755, 1.04719755, 1.04719755, 1.57079633];//1param acc
-   
+   // let latt_shaking : Vec<f64> = vec![1.83259571, 0., 1.83259571, 2.87979327, 1.83259571, 1.83259571, 1.83259571, 3.40339204, 3.66519143,
+   // 3.40339204, 3.40339204, 3.14159265, 3.92699082, 3.92699082, 2.35619449, 2.35619449, 3.92699082, 3.92699082,
+   // 3.92699082, 3.66519143, 3.66519143, 3.66519143, 2.61799388, 3.66519143, 1.57079633, 1.57079633, 1.57079633,
+   // 1.04719755, 1.04719755, 1.04719755, 1.04719755, 1.57079633];//1param acc
+
+
+   let latt_shaking = vec![ 1.83259571, 1.83259571, 1.83259571, 1.83259571, 1.83259571, 1.83259571, 1.04719755, 1.04719755, 1.04719755,
+   0., 0., 0.52359878, 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.26179939, 0., 0., 0., 0., 0., 0., 0., 0.]; //lattice sensitive
    // Create file
-   let _file2 = File::create("../test.txt").unwrap();
+   let _file2 = File::create("./Data/Rust_Runs/testing_cfi/test_longer_withdepth_withqfi.txt").unwrap();
 
    // Open file
    let file = OpenOptions::new()
       .write(true)
       .append(true)
-      .open("../test.txt").unwrap();
+      .open("./Data/Rust_Runs/testing_cfi/test_longer_withdepth_withqfi.txt").unwrap();
 
    // Wrap file in Mutex for thread safety
    let file = Mutex::new(file);
 
    // We multithread iterator over acceleration, but not lattice depth. 
    // Sufficient for my laptop/desktop.
-   println!("Generating multiparam Bayesian priors for SP sequence");
+   println!("Testing CFI calculations using the augmented state method");
 
    let no_of_runs : u64 = 1001; 
 
@@ -61,15 +65,16 @@ fn main() {
     .unwrap()
     .progress_chars("##-"));
 
+   let tof = PI/11.5 *32.0;
+   let f_mz = ( 4.0 * 2.0 * tof.powi(2) ).powi(2)/4.0;
+   println!("{}", f_mz);
+   
    let _sum : Vec<f64> = (0..no_of_runs).into_par_iter().map(|x| {
      // let acc = -0.00225 + (0.00225*2.0 * x as f64)/(1000 as f64);
-   //  let acc = -0.0225 + (0.0225*2.0 * x as f64)/((no_of_runs - 1) as f64);
-   let acc = -0.01 + (0.01*2.0 * x as f64)/((no_of_runs -1) as f64); // roughly 0.056g plus or minus in 1064nm
-
+     let acc = -1.0 + ( 1.0*2.0 * x as f64)/( (no_of_runs-1) as f64);
      for y in 0..1 {
-      //   let latdep : f64 =  9.0 + (2.0* y as f64)/(50 as f64);
-
-      let latdep : f64 = 10.0;
+        // let latdep : f64 =  9.0 + (2.0* y as f64)/(50 as f64);
+        let latdep : f64 =  10.0;
       
 
 
@@ -81,15 +86,14 @@ fn main() {
              sign *= -1.0;
          };
 
-         let out = latt.get_psi();
-         let momentum_i: Vec<Complex64> = (out.conjugate().component_mul(&out)).data.into();
-         let momentum : Vec<f64> = momentum_i.iter().map(|&m| m.re).collect();
+
+         let result = vec![latt.acc_cfi() , latt.acc_qfi(), latt.depth_cfi(), latt.depth_qfi()];
          let mut s = String::new();
          s =  s + &format!("{x}\t{y}\t");
          s =  s + &format!("{acc}\t{latdep}\t");
 
 
-         for num in momentum {
+         for num in result {
             s.push_str(&num.to_string());
             s.push_str("\t");
          }
@@ -105,6 +109,19 @@ fn main() {
       
       bar.inc(1); acc}).collect();
 
+
+      // test my cfi module
+      let d_psi = DVector::from_vec( vec! [ Complex64::new( 0.5, 0.0), Complex64::new(0.2,0.3)]) ;
+      let psi = DVector::from_vec( vec! [ Complex64::new( 0.9, 0.1), Complex64::new(0.2,0.3)]) ;
+
+      let p_a : f64 = d_psi.iter().zip(psi.iter()).map(|(&dp, &p)|
+      { (2.0*(dp*p.conj()).re ).powi(2)/( p.norm_sqr())}
+      ).collect::<Vec<f64>>().iter().sum();
+
+      println!( "{p_a}");
+
+      let byhand = (2.0*( 0.5*0.9))*(2.0*( 0.5*0.9))/(0.81+0.01) + (2.0*( 0.2*0.2 + 0.3*0.3))*(2.0*( 0.2*0.2 + 0.3*0.3)) /(0.04+0.09);
+      println!("{byhand}");
 
    
 }
