@@ -43,6 +43,12 @@ impl Lattice {
         self.depth = depth;
     }
 
+    /// Sets time of this lattice.
+    /// Used only when we're manually doing RK4 to track CFI and QFI metrics.
+    pub fn set_time(&mut self, time: f64){
+        self.time = time;
+    }
+
     /// Returns full Hamiltonian with $\phi=0$ 
     pub fn get_hamiltonian(&self) -> DMatrix<Complex64> {
         let hamiltonian = &self.h0 - &self.h2;

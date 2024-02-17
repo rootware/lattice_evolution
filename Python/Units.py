@@ -7,6 +7,7 @@ atomicmass = 86.90918;
 massDalton = 1.660539*10**(-27);
 mass = atomicmass * massDalton;
 E_R = (hbar * k_L)**2 /(2*mass);
+omega_R = E_R/hbar;
 g=9.81;
 accUnit= 2*(E_R)**2/(hbar**2*k_L);
 
