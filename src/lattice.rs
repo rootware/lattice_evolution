@@ -150,7 +150,7 @@ impl Lattice {
 
 
 
-        &hamiltonian*state_deriv*Complex64::new(0.0,-1.0) + &ham_shaking*state/Complex::new(0.0, -1.0/self.depth)
+        &hamiltonian*state_deriv*Complex64::new(0.0,-1.0) + &ham_shaking*state*Complex::new(0.0, -1.0/self.depth)
     }
 
     
