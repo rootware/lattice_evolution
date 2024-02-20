@@ -67,7 +67,7 @@ fn main() {
 
     let _sum : Vec<f64> = (0..101).into_par_iter().map(|x| {
      // let acc = -0.00225 + (0.00225*2.0 * x as f64)/(1000 as f64);
-    let acc = -4.0+ (4.0*2.0 * x as f64)/(100 as f64);
+    let acc = -0.0225 + (0.0225*2.0 * x as f64)/(100 as f64);
      for y in 0..51 {
         let latdep : f64 =  9.0 + (2.0* y as f64)/(50 as f64);
     
