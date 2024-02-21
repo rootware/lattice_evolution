@@ -87,7 +87,7 @@ fn main() {
 
             let mut time : f64 = 0.0;
             let period : f64 = 50.0e-9/units::TIME_UNIT; // 50ns in code units    
-            let no_iter = 1; // small
+            let no_iter = 10; // small
             let mut it = 0;
             let dt = period/(no_iter as f64);
 
