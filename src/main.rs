@@ -34,14 +34,14 @@ fn main() {
     assert_eq!(time_val.len(), shakingfunction.len());
 
     // Create file
-    let _file1 = File::create("./Catie/test_longer.txt").unwrap();
-    let _file2 = File::create("./Catie/cfi_qfi_longer.txt").unwrap();
+    let _file1 = File::create("./Catie/test_longer_3.txt").unwrap();
+    let _file2 = File::create("./Catie/cfi_qfi_longer_3.txt").unwrap();
 
     // Open file
     let file = OpenOptions::new()
         .write(true)
         .append(true)
-        .open("./Catie/test_longer.txt").unwrap();
+        .open("./Catie/test_longer_3.txt").unwrap();
 
     // Wrap file in Mutex for thread safety
     let file = Mutex::new(file);
@@ -50,7 +50,7 @@ fn main() {
     let file2 = OpenOptions::new()
         .write(true)
         .append(true)
-        .open("./Catie/cfi_qfi_longer.txt").unwrap();
+        .open("./Catie/cfi_qfi_longer_3.txt").unwrap();
 
     // Wrap file in Mutex for thread safety
     let file2 = Mutex::new(file2);
@@ -67,7 +67,7 @@ fn main() {
 
     let _sum : Vec<f64> = (0..101).into_par_iter().map(|x| {
      // let acc = -0.00225 + (0.00225*2.0 * x as f64)/(1000 as f64);
-    let acc = -0.0225 + (0.0225*2.0 * x as f64)/(100 as f64);
+    let acc = -0.1 + (0.1*2.0 * x as f64)/(100 as f64);
      for y in 0..51 {
         let latdep : f64 =  9.0 + (2.0* y as f64)/(50 as f64);
     

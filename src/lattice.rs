@@ -120,8 +120,8 @@ impl Lattice {
     /// update is essentially the derivative to the wavepacket at time t$
     /// It's given by $-i*H*|\psi>$
     pub fn update(&self, wavefunction: DVector<Complex64>, amplitude:f64, omega: f64, t: f64 ) -> DVector<Complex64> {
-        let phi = amplitude*f64::sin(omega*t);
-        //let phi = amplitude; //for QOC
+       // let phi = amplitude*f64::sin(omega*t);
+        let phi = amplitude; //for QOC
 
         let hamiltonian = &self.h0 + &self.h1*Complex64::from(f64::sin(phi)) - &self.h2*Complex64::from(f64::cos(phi));
         hamiltonian*wavefunction*Complex64::new(0.0,-1.0)
@@ -130,8 +130,8 @@ impl Lattice {
     /// update_d is essentially the derivative to the state derivative at time t$
     /// It's given by $-i*H*|\psi> +i*\hat{p}t$
     pub fn update_da(&self, state_deriv: DVector<Complex64>, state: DVector<Complex64>,amplitude:f64, omega: f64, t: f64 ) -> DVector<Complex64> {
-        let phi = amplitude*f64::sin(omega*t);
-       // let phi = amplitude; //for QOC
+      //  let phi = amplitude*f64::sin(omega*t);
+        let phi = amplitude; //for QOC
 
 
         let hamiltonian = &self.h0 + &self.h1*Complex64::from(f64::sin(phi)) - &self.h2*Complex64::from(f64::cos(phi));
@@ -149,8 +149,8 @@ impl Lattice {
     }
 
     pub fn update_d_v(&self, state_deriv: DVector<Complex64>, state: DVector<Complex64>,amplitude:f64, omega: f64, t: f64 ) -> DVector<Complex64> {
-        let phi = amplitude*f64::sin(omega*t);
-        // let phi = amplitude;//for QOC
+      //  let phi = amplitude*f64::sin(omega*t);
+        let phi = amplitude;//for QOC
         let ham_shaking = &self.h1*Complex64::from(f64::sin(phi)) - &self.h2*Complex64::from(f64::cos(phi));
         let hamiltonian = &self.h0 + &ham_shaking;
 
