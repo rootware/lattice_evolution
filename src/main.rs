@@ -34,14 +34,14 @@ fn main() {
     assert_eq!(time_val.len(), shakingfunction.len());
 
     // Create file
-    let _file1 = File::create("./Catie/test_longer_3.txt").unwrap();
-    let _file2 = File::create("./Catie/cfi_qfi_longer_3.txt").unwrap();
+    let _file1 = File::create("./Catie/test_longer_withprop.txt").unwrap();
+    let _file2 = File::create("./Catie/cfi_qfi_longer_withprop.txt").unwrap();
 
     // Open file
     let file = OpenOptions::new()
         .write(true)
         .append(true)
-        .open("./Catie/test_longer_3.txt").unwrap();
+        .open("./Catie/test_longer_withprop.txt").unwrap();
 
     // Wrap file in Mutex for thread safety
     let file = Mutex::new(file);
@@ -50,7 +50,7 @@ fn main() {
     let file2 = OpenOptions::new()
         .write(true)
         .append(true)
-        .open("./Catie/cfi_qfi_longer_3.txt").unwrap();
+        .open("./Catie/cfi_qfi_longer_withprop.txt").unwrap();
 
     // Wrap file in Mutex for thread safety
     let file2 = Mutex::new(file2);
@@ -78,6 +78,9 @@ fn main() {
         //----------------------
         let mut index: usize = 0;
         let mut total_time = 0.0;// just for consistency, compiler will complain, ideally should be 0.0
+        let propagatime_time = 100.0e-6/units::TIME_UNIT;
+        let time_of_start_propagation = 117.0e-6/units::TIME_UNIT;
+        
         for ampl in &shakingfunction{
 
           //  total_time = time_val[index]/units::TIME_UNIT;
@@ -90,6 +93,7 @@ fn main() {
             let no_iter = 10; // small
             let mut it = 0;
             let dt = period/(no_iter as f64);
+
 
             while it < no_iter {
                 latt.rk4step( dt,  amplitude, FREQ, time);
