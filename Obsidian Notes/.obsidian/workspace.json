@@ -4,11 +4,11 @@
     "type": "split",
     "children": [
       {
-        "id": "abca9e4b157e1c17",
+        "id": "4227775de515e948",
         "type": "tabs",
         "children": [
           {
-            "id": "d8dc9c69e44effa6",
+            "id": "3e22099834517e4b",
             "type": "leaf",
             "state": {
               "type": "empty",
@@ -138,13 +138,13 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "d8dc9c69e44effa6",
+  "active": "3e22099834517e4b",
   "lastOpenFiles": [
+    "Vaccines.md",
     "Jenson Shannon Divergence/Jenson-Shannon Detailed Notes.md",
     "DAMOP abstracts draft.md",
     "Future Implementation and Possible Issues.md",
     "To-Do's and Possible Issues.md",
-    "Untitled.md",
     "JSD Results section.md",
     "Welcome.md",
     "create a link.md",

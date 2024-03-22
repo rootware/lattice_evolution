@@ -64,7 +64,7 @@ class Sequence2param:
 
             
 
-    def BayesianUpdating(self, totalmeasurements: int, recordstep: int, totalrecords: int, save_measurement: bool, outcome_file: str):
+    def BayesianUpdating(self, totalmeasurements: int, recordstep: int, totalrecords: int, save_measurement: bool, outcome_file: str, calculate_moments: bool):
         """
         @save_measurement saves the generated outcomes so results can be replicated
         """
@@ -93,6 +93,9 @@ class Sequence2param:
         plotPaV=np.array([PaVprior]);
         
         counter =0;
+        stdTimetrue=[];
+        stdTimeprob=[];
+        meanTime=[];
         for m in outcomes:
             for i in range(self.AList.size*self.VList.size):
                 indexpair = self.AVListIndex[i];
@@ -104,8 +107,22 @@ class Sequence2param:
             counter+=1;
             if counter % recordstep == 0 and counter < totalrecords: #I forgot to add recordstep == 0 before
                 plotPaV=np.append(plotPaV,[PaVprior], axis=0); 
+        
 
-        return plotPaV;
+            if calculate_moments== True:
+
+                PaVprior_acc = np.sum(PaVprior, axis = 1);
+                PaVprior_acc/=np.sum(PaVprior_acc);
+                AList = self.AList;
+                mean = np.dot(AList, PaVprior_acc)#bayesian mean
+                truemean= AList[int((AList.shape[0]-1)/2)]# 0.0;#true mean
+                sq = np.dot (np.power(AList, 2), PaVprior_acc)
+                meanTime.append(mean);
+                stdTimeprob.append(np.sqrt( sq- mean**2));# true mean or bayesian mean
+                stdTimetrue.append(np.sqrt( sq- truemean**2));# true mean or bayesian mean
+
+
+        return (plotPaV, meanTime, stdTimeprob, stdTimetrue);
 
 
     def accJSD (self):
@@ -151,3 +168,43 @@ class Sequence2param:
                 JSDivergenceMatrix [i][j]= JSDivergence(momproblist_a[i], momproblist_V[j])
         return JSDivergenceMatrix;
 
+
+    def BayesianScan(self, totalmeasurements: int, Vstep: int):
+        """
+        @save_measurement saves the generated outcomes so results can be replicated
+        """
+        PossibleMomentumOutcomes =np.array( [-10+2*i for i in range(0,11)]); # values of momentum in n\hbar k_L
+        PossibleOutcomes = range(0,11);
+        datamom =np.reshape(self.MomProb, (self.AList.size,self.VList.size,11));
+
+        MLE_a =[];
+        V_values=[];
+        for V_index in range(0, self.VList.shape[0], Vstep):
+            P_actual=np.array(datamom[int((self.AList.shape[0]-1)/2),V_index,:]); # Fix this hardcoded value #FUCK
+
+            P_actual=P_actual/np.sum(P_actual);
+            P_simulated = P_actual; #No errors
+
+            Runs=totalmeasurements; # How many simulated data do we want
+            outcomes = np.random.default_rng().choice(PossibleOutcomes,size=Runs, p = P_simulated);
+           
+            
+            unique, frequency = np.unique(outcomes, return_counts = True);
+
+            PaVprior = np.full(self.AList.size,1)/(self.AList.size);
+
+
+            counter =0;
+            for m in outcomes:
+                for i in range(self.AList.size):
+                    MomentumProbabilities = datamom[ i, int((self.VList.shape[0]-1)/2), :];
+
+                    PaVprior[i] *= (MomentumProbabilities[m])
+                    PaVprior/=np.sum(PaVprior)
+
+            
+            MLE_val = self.AList[np.argmax( PaVprior )];
+            MLE_a.append(MLE_val);
+            V_values.append(self.VList[ V_index]);
+
+        return (V_values, MLE_a);
