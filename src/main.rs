@@ -1,10 +1,17 @@
+pub mod jittery_lattice;
 pub mod lattice;
-pub mod read;
-pub mod units;
-use num_complex::Complex64;
-use lattice::Lattice;
-use read::read;
+pub mod statistics;
+
+/*use plotly::common::{
+   ColorScale, ColorScalePalette, DashType, Fill, Font, Line, LineShape, Marker, Mode, Title,
+};*/
 use rayon::prelude::*;
+use num_complex::Complex64;
+
+use lattice::Lattice;
+use jittery_lattice::JitteryLattice;
+use statistics::jenson_shannon_divergence;
+
 
 use std::fs::OpenOptions;
 use std::fs::File;
@@ -13,11 +20,16 @@ use std::sync::Mutex;
 use indicatif::ProgressBar;
 use indicatif::ProgressStyle;
 
+//use plotly::{Plot, Scatter};
+
 
 /// This const is usually used to fix $\omega$ for our shaking functions 
 /// to be $\omega=11.5\omega_r$, since we only vary the amplitude of the shaking function in this RL.
 const FREQ: f64 = 11.5;
 
+/// Decide if we first shake to the +ve or -ve x direction.
+/// Each subsequent shaking has opposite sign.
+const TOGGLE_INIT : f64 = 1.0;
 
 
 /// #Description of code:
@@ -30,129 +42,154 @@ const FREQ: f64 = 11.5;
 /// [acc index, lattice index, acceleration $a$ , lattice depth $V_0$ , P(p|a,V_0$ ]
 fn main() {
 
-    let (time_val, shakingfunction) = read();
-    assert_eq!(time_val.len(), shakingfunction.len());
+   // hard code our shaking sequence
 
-    // Create file
-    let _file1 = File::create("./Catie/test_longer_withprop.txt").unwrap();
-    let _file2 = File::create("./Catie/cfi_qfi_longer_withprop.txt").unwrap();
+   let mp_shaking: Vec<f64> = vec![1.83259571, 0., 1.83259571, 2.87979327, 1.83259571, 1.83259571, 1.83259571, 3.40339204, 3.66519143,
+   3.40339204, 3.40339204, 3.14159265, 3.92699082, 3.92699082, 2.35619449, 2.35619449, 3.92699082, 3.92699082,
+   3.92699082, 3.66519143, 3.66519143, 3.66519143, 2.61799388, 3.66519143, 1.57079633, 1.57079633, 1.57079633,
+   1.04719755, 1.04719755, 1.04719755, 1.04719755, 1.57079633];//Option 2 sequence, or "MP" sequence
 
-    // Open file
-    let file = OpenOptions::new()
-        .write(true)
-        .append(true)
-        .open("./Catie/test_longer_withprop.txt").unwrap();
+   let sp_shaking: Vec<f64> = vec![3.92699082, 3.92699082, 3.40339204, 0., 3.66519143, 0., 3.14159265, 3.66519143, 3.92699082, 3.92699082,
+   3.66519143, 3.14159265, 3.14159265, 3.14159265, 3.14159265, 3.14159265, 2.35619449, 1.83259571, 1.83259571,
+   1.83259571, 0.78539816, 3.40339204, 3.40339204, 2.87979327, 3.40339204, 3.40339204, 3.40339204, 3.40339204,
+   1.04719755, 1.04719755, 0.78539816, 0.78539816];//1param acc
+   
+   let latt_shaking : Vec<f64> =  mp_shaking; //In ideal Rust, you could handle this via enums
+   
+   // Create file
+   let _file2 = File::create("./test_jitter_updated/jitter_MP.txt").unwrap();
+   // Open file
+   let file = OpenOptions::new()
+      .write(true)
+      .append(true)
+      .open("./test_jitter_updated/jitter_MP.txt").unwrap();
 
-    // Wrap file in Mutex for thread safety
-    let file = Mutex::new(file);
-
-        // Open file
-    let file2 = OpenOptions::new()
-        .write(true)
-        .append(true)
-        .open("./Catie/cfi_qfi_longer_withprop.txt").unwrap();
-
-    // Wrap file in Mutex for thread safety
-    let file2 = Mutex::new(file2);
+   // Wrap file in Mutex for thread safety
+   let file = Mutex::new(file);
 
 
-    // We multithread iterator over acceleration, but not lattice depth. 
-    // Sufficient for my laptop/desktop.
-    println!("Generating priors for Catie's sequence");
 
-    let bar = ProgressBar::new(101 );
-    bar.set_style(ProgressStyle::with_template("[{elapsed_precise}] {wide_bar:100.cyan/blue} {pos:>7}/{len:7} {msg}")
+   // let jitter_vec = Vec::<f64>::new();
+   // let jsd_vec = Vec::<f64>::new();
+   // let jitter_vec = Mutex::new(jitter_vec);
+   // let jsd_vec = Mutex::new(jsd_vec);
+
+   println!("#Testing jitter#");
+   print!("Executing Shaking Sequence for Regular Lattice.. ");
+
+   //-------------------------------------------------------------------------------------
+   let latdep : f64 =  10.0;      let acc = 0.0;
+   let mut latt = Lattice::new(acc, latdep);
+
+   let mut sign = TOGGLE_INIT;
+   for ampl in &latt_shaking{
+       latt.step( *ampl*sign, FREQ);
+       sign *= -1.0;
+   };
+
+   let out = latt.get_psi();
+   let momentum_i: Vec<Complex64> = (out.conjugate().component_mul(&out)).data.into();
+   let momentum_0 : Vec<f64> = momentum_i.iter().map(|&m| m.re).collect();
+   let mut s = String::new();
+   let jsd_trivial = jenson_shannon_divergence(momentum_0.clone(), momentum_0.clone() );
+
+   s =  s + &format!("0.0\t{jsd_trivial}\t");
+   s =  s + &format!("{acc}\t{latdep}\t");
+
+
+   for num in &momentum_0 {
+      s.push_str(&num.to_string());
+      s.push_str("\t");
+   }
+   s.push_str("\n");
+
+   file.lock()
+   .unwrap()
+   .write_all( s.as_bytes())
+   .unwrap();
+   println!("Completed!"   );
+   //---------------------------------------------------------------------------------------
+
+
+
+   let max_sigma_index = 4;
+   let averaging_number = 5; // For each sigma, run independent lattice runs this many times for averaging
+   // The averaging can be done in the Python plotting code
+   let max_acc = 501;
+
+   let bar = ProgressBar::new(max_acc );
+   bar.set_style(ProgressStyle::with_template("[{elapsed_precise}] {bar:100.cyan/blue} {pos:>7}/{len:7} {msg}")
     .unwrap()
     .progress_chars("##-"));
 
-    let _sum : Vec<f64> = (0..101).into_par_iter().map(|x| {
-     // let acc = -0.00225 + (0.00225*2.0 * x as f64)/(1000 as f64);
-    let acc = -0.1 + (0.1*2.0 * x as f64)/(100 as f64);
-     for y in 0..51 {
-        let latdep : f64 =  9.0 + (2.0* y as f64)/(50 as f64);
-    
 
 
-        let mut latt = Lattice::new(acc, latdep);
 
-        //----------------------
-        let mut index: usize = 0;
-        let mut total_time = 0.0;// just for consistency, compiler will complain, ideally should be 0.0
-        let propagatime_time = 100.0e-6/units::TIME_UNIT;
-        let time_of_start_propagation = 117.0e-6/units::TIME_UNIT;
-        
-        for ampl in &shakingfunction{
+   // We multithread iterator over acceleration, but not lattice depth. 
+   // Sufficient for my laptop/desktop.
 
-          //  total_time = time_val[index]/units::TIME_UNIT;
-            latt.set_time(total_time);
-
-            let amplitude = *ampl;
-
-            let mut time : f64 = 0.0;
-            let period : f64 = 50.0e-9/units::TIME_UNIT; // 50ns in code units    
-            let no_iter = 10; // small
-            let mut it = 0;
-            let dt = period/(no_iter as f64);
-
-
-            while it < no_iter {
-                latt.rk4step( dt,  amplitude, FREQ, time);
-                it+=1; time +=dt;
-    
-            }
-            total_time += time;
-            index+=1;
-
-
-  
-
-
-        }
-        if x==1 && y==1 {
-            println!("{}",total_time*units::TIME_UNIT);
-        }
-    //-----------------------------
-
-        let out = latt.get_psi();
-        let momentum_i: Vec<Complex64> = (out.conjugate().component_mul(&out)).data.into();
-        let momentum : Vec<f64> = momentum_i.iter().map(|&m| m.re).collect();
-        let mut s = String::new();
-        s =  s + &format!("{x}\t{y}\t");
-        s =  s + &format!("{acc}\t{latdep}\t");
-
-
-        for num in momentum {
-            s.push_str(&num.to_string());
-            s.push_str("\t");
-        }
-        s.push_str("\n");
-
-        file.lock()
-        .unwrap()
-        .write_all( s.as_bytes())
-        .unwrap();
-
-        if y == 25 {
-            let result = vec![acc, latdep, latt.acc_cfi(), latt.acc_qfi()];
-            let mut s = String::new();
-            for num in result {
-                s.push_str(&num.to_string());
-                s.push_str("\t");
-            }
-            s.push_str("\n");
-    
-            file2.lock()
-            .unwrap()
-            .write_all( s.as_bytes())
-            .unwrap();
-
-        }
-
-        
-      }
-      
-      bar.inc(1); acc}).collect();
-
-
+   println!("Now calculating jittery lattices..");
+   println!("Progress bar shows acceleration values, since that's the largest for loop and the one we multithread");
    
+   let _sum : Vec<f64> = (0..max_acc).into_par_iter().map(|x| {
+      let acc = -0.0225 + (0.0225*2.0 * x as f64)/((max_acc - 1) as f64);
+     // let acc = -0.0225 + (0.0225*2.0 * x as f64)/(500 as f64);
+         let _sumd : Vec<f64> = (1..=max_sigma_index).into_iter().map(|sg| {
+            let jitter_sigma = sg as f64/max_sigma_index as f64; 
+
+            for _count in 0..averaging_number {
+               let mut jittery_latt = JitteryLattice::new( acc, latdep, jitter_sigma);
+
+               let mut sign = TOGGLE_INIT;
+               for ampl in &latt_shaking{
+                     jittery_latt.step( *ampl*sign, FREQ);
+                     sign *= -1.0;
+               };
+
+               let out = jittery_latt.get_psi();
+               let momentum_i: Vec<Complex64> = (out.conjugate().component_mul(&out)).data.into();
+               let momentum : Vec<f64> = momentum_i.iter().map(|&m| m.re).collect();
+               let mut s = String::new();
+
+               let jsd = jenson_shannon_divergence(momentum_0.clone(), momentum.clone());
+
+               s =  s + &format!("{jitter_sigma}\t{jsd}\t");
+               s =  s + &format!("{acc}\t{latdep}\t");
+
+            
+            
+
+               for num in momentum {
+                  s.push_str(&num.to_string());
+                  s.push_str("\t");
+               }
+               s.push_str("\n");
+
+               file.lock()
+               .unwrap()
+               .write_all( s.as_bytes())
+               .unwrap();
+
+               /*/
+               jsd_vec.lock()
+                  .unwrap()
+                  .push(jsd);
+
+               jitter_vec.lock().unwrap().push(jitter_sigma);
+               */
+            };
+         
+          sg as f64}).collect();
+
+          bar.inc(1); x as f64}).collect();
+
+      
+
+      /*
+      let mut plot = Plot::new();
+      let trace = Scatter::new(jitter_vec.into_inner().unwrap(), jsd_vec.into_inner().unwrap()).mode(Mode::Markers);
+      plot.add_trace(trace);
+      plot.write_html("./test_jitter_updated/jitter_MP.html");
+      */
+
 }

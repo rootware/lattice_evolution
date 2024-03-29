@@ -1,21 +1,31 @@
-### Bayesian:
+Updated Mar 27, 2023
 
-On single parameter:
-- For some reason, regenerated plots are coming out with a different from CR bound. Double check why
-- Use rust code if need be
-On SPvMP,
-- See if i can use the previous measurement files for making the plot
-- That way, we have consistency
-- Estimate dynamic range
+Things to do:
 
-### Paper Edits: 
-- Fig 1 : show general sensing?
-- Font size on plots? Esp in Fig.9, 
-- Ask people about fig font size
-- Check in with John about scheduling for Thursday/Friday for meeting?
-- Fix bayesian plots to bein $g$..
-- add lattice JSD plots
-- Add plot showing $\phi_a = a k_L T^2$ wrap around, which should happen when $\phi_a = 2\pi n$, which yields $a=0.08221969228087173 \omega_r v_r$. In 1064nm laser, this turns out to be $a=0.46080207078695073g$ .
-  
+1. Jittery lattice:
+	- [x] run jitter data again for DSP sequence, but average over multiple values for each $\sigma$
+	- [x] run jitter data similarly for SP sequence
+	- [x] Plot JSD variation for both on same plot
+This has changed now:
+	- This can now be done using a plot of JSD(a,a=0) for different sigma
+	- And show the short distance expansion
+	- 
+1. Write Robustness paragraph:
+	1. Shot to shot variation
+	2. Mistaken belief in lattice depth
+	3. "jittering lattice" 
+2. Ask John about Allan deviation
+3. Bayesian $P(a,V|M)$ plot:
+	- [ ] Fix last panel to also have fewer tick labels
+4. Combined JSD plots:
+	- [ ] Move curvature plot into place of cross correlation
+	- [ ] Discuss curvature plot
+	- [ ] add blue marker to origin
+	- [ ] Add discussion:
+		- [ ] Discuss how there is a tilt in curvature, and this leads to slight correlation
+		- [ ] Add in appendix a discussion of SP sequence for comparison?
+	- [ ] CFI plot:
+		- [ ] Add CFI plot to replace pixelation noise
+		- [ ] 
 
   

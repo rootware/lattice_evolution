@@ -13,7 +13,7 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Obsidian Notes/CFI notes and quick numerical values for reference.md",
+                "file": "Obsidian Notes/Edits to paper.md",
                 "mode": "source",
                 "source": false
               }
@@ -85,7 +85,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Obsidian Notes/CFI notes and quick numerical values for reference.md",
+                "file": "Obsidian Notes/Edits to paper.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -102,7 +102,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "Obsidian Notes/CFI notes and quick numerical values for reference.md",
+                "file": "Obsidian Notes/Edits to paper.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -125,7 +125,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Obsidian Notes/CFI notes and quick numerical values for reference.md"
+                "file": "Obsidian Notes/Edits to paper.md"
               }
             }
           }
@@ -150,22 +150,23 @@
   "lastOpenFiles": [
     "target/release/deps/lattice_evolution-b1be631cd69a37d4",
     "target/release/deps/lattice_evolution-b1be631cd69a37d4.lattice_evolution.5d1f6a527749904f-cgu.01.rcgu.o",
-    "target/release/deps/lattice_evolution-b1be631cd69a37d4.lattice_evolution.5d1f6a527749904f-cgu.06.rcgu.o",
-    "target/release/deps/lattice_evolution-b1be631cd69a37d4.lattice_evolution.5d1f6a527749904f-cgu.08.rcgu.o",
     "target/release/deps/lattice_evolution-b1be631cd69a37d4.lattice_evolution.5d1f6a527749904f-cgu.03.rcgu.o",
+    "target/release/deps/lattice_evolution-b1be631cd69a37d4.lattice_evolution.5d1f6a527749904f-cgu.15.rcgu.o",
+    "target/release/deps/lattice_evolution-b1be631cd69a37d4.lattice_evolution.5d1f6a527749904f-cgu.09.rcgu.o",
     "target/release/deps/lattice_evolution-b1be631cd69a37d4.lattice_evolution.5d1f6a527749904f-cgu.05.rcgu.o",
-    "target/release/deps/lattice_evolution-b1be631cd69a37d4.lattice_evolution.5d1f6a527749904f-cgu.14.rcgu.o",
+    "target/release/deps/lattice_evolution-b1be631cd69a37d4.lattice_evolution.5d1f6a527749904f-cgu.11.rcgu.o",
+    "target/release/deps/lattice_evolution-b1be631cd69a37d4.lattice_evolution.5d1f6a527749904f-cgu.06.rcgu.o",
     "target/release/deps/lattice_evolution-b1be631cd69a37d4.lattice_evolution.5d1f6a527749904f-cgu.04.rcgu.o",
-    "target/release/deps/lattice_evolution-b1be631cd69a37d4.lattice_evolution.5d1f6a527749904f-cgu.13.rcgu.o",
-    "target/release/deps/lattice_evolution-b1be631cd69a37d4.lattice_evolution.5d1f6a527749904f-cgu.07.rcgu.o",
+    "target/release/deps/lattice_evolution-b1be631cd69a37d4.lattice_evolution.5d1f6a527749904f-cgu.12.rcgu.o",
     "target/release/deps/lattice_evolution-b1be631cd69a37d4.lattice_evolution.5d1f6a527749904f-cgu.10.rcgu.o",
+    "paper_plots/combining_pdfs_MP.svg",
+    "Obsidian Notes/Future Implementation and Possible Issues.md",
     "Obsidian Notes/Edits to paper.md",
+    "Obsidian Notes/CFI notes and quick numerical values for reference.md",
     "Billing.md",
     "Data/Rust_Runs/testing_cfi/cfivsa.png",
     "Data/Rust_Runs/testing_cfi/JSandCFIva.png",
     "Obsidian Notes/DAMOP abstracts draft.md",
-    "Obsidian Notes/CFI notes and quick numerical values for reference.md",
-    "Obsidian Notes/Future Implementation and Possible Issues.md",
     "Data/Rust_Runs/Option2_Rust_Run2/combined_g_new.png",
     "Data/Rust_Runs/Option2_Rust_Run2/expJS_acc_50measurements.png",
     "Data/Rust_Runs/2param_lattice/combined.svg",
@@ -173,7 +174,6 @@
     "Data/Rust_Runs/2param_lattice/expJS_latt_50measurements.png",
     "Python/expJS_latt_50measurements.png",
     "Data/Rust_Runs/2param_lattice/JS_latt.png",
-    "Python/JS_latt.png",
     "README.md",
     "Obsidian Notes/Bayesian/Bayesian.md",
     "Obsidian Notes/Jenson Shannon Divergence/Jenson-Shannon Detailed Notes.md",
