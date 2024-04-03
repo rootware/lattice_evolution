@@ -49,20 +49,32 @@ fn main() {
    3.92699082, 3.66519143, 3.66519143, 3.66519143, 2.61799388, 3.66519143, 1.57079633, 1.57079633, 1.57079633,
    1.04719755, 1.04719755, 1.04719755, 1.04719755, 1.57079633];//Option 2 sequence, or "MP" sequence
 
+   let option1_shaking: Vec<f64>= vec![3.92699082, 3.66519143, 2.35619449, 1.30899694, 1.30899694, 2.35619449, 3.40339204, 3.14159265, 3.40339204,
+   3.40339204, 3.40339204, 3.40339204, 2.87979327, 2.35619449, 2.35619449, 2.35619449, 2.35619449, 2.35619449,
+   2.35619449, 2.61799388, 3.66519143, 3.14159265, 3.66519143, 3.66519143, 3.14159265, 2.87979327, 3.14159265,
+   3.40339204, 1.04719755, 1.04719755, 0.78539816, 2.61799388] ;
+
+
+
    let sp_shaking: Vec<f64> = vec![3.92699082, 3.92699082, 3.40339204, 0., 3.66519143, 0., 3.14159265, 3.66519143, 3.92699082, 3.92699082,
    3.66519143, 3.14159265, 3.14159265, 3.14159265, 3.14159265, 3.14159265, 2.35619449, 1.83259571, 1.83259571,
    1.83259571, 0.78539816, 3.40339204, 3.40339204, 2.87979327, 3.40339204, 3.40339204, 3.40339204, 3.40339204,
    1.04719755, 1.04719755, 0.78539816, 0.78539816];//1param acc
    
-   let latt_shaking : Vec<f64> =  mp_shaking; //In ideal Rust, you could handle this via enums
+   let l_shaking: Vec<f64> =vec![1.83259571, 1.83259571, 1.83259571, 1.83259571, 1.83259571, 1.83259571, 1.04719755, 1.04719755, 1.04719755,
+   0., 0., 0.52359878, 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.26179939, 0., 0., 0., 0., 0., 0., 0., 0.];//lattice sensitive sequence
+
+
+
+   let latt_shaking : Vec<f64> =  l_shaking; //In ideal Rust, you could handle this via enums
    
    // Create file
-   let _file2 = File::create("./test_jitter_updated/jitter_MP.txt").unwrap();
+   let _file2 = File::create("./test_jitter_updated/jitter_latt_diagnostic.txt").unwrap();
    // Open file
    let file = OpenOptions::new()
       .write(true)
       .append(true)
-      .open("./test_jitter_updated/jitter_MP.txt").unwrap();
+      .open("./test_jitter_updated/jitter_latt_diagnostic.txt").unwrap();
 
    // Wrap file in Mutex for thread safety
    let file = Mutex::new(file);
@@ -92,7 +104,7 @@ fn main() {
    let momentum_0 : Vec<f64> = momentum_i.iter().map(|&m| m.re).collect();
    let mut s = String::new();
    let jsd_trivial = jenson_shannon_divergence(momentum_0.clone(), momentum_0.clone() );
-
+/*
    s =  s + &format!("0.0\t{jsd_trivial}\t");
    s =  s + &format!("{acc}\t{latdep}\t");
 
@@ -107,6 +119,7 @@ fn main() {
    .unwrap()
    .write_all( s.as_bytes())
    .unwrap();
+*/
    println!("Completed!"   );
    //---------------------------------------------------------------------------------------
 
@@ -115,7 +128,7 @@ fn main() {
    let max_sigma_index = 4;
    let averaging_number = 5; // For each sigma, run independent lattice runs this many times for averaging
    // The averaging can be done in the Python plotting code
-   let max_acc = 501;
+   let max_acc = 51;
 
    let bar = ProgressBar::new(max_acc );
    bar.set_style(ProgressStyle::with_template("[{elapsed_precise}] {bar:100.cyan/blue} {pos:>7}/{len:7} {msg}")
@@ -132,10 +145,10 @@ fn main() {
    println!("Progress bar shows acceleration values, since that's the largest for loop and the one we multithread");
    
    let _sum : Vec<f64> = (0..max_acc).into_par_iter().map(|x| {
-      let acc = -0.0225 + (0.0225*2.0 * x as f64)/((max_acc - 1) as f64);
+      let acc = -0.003 + (0.003*2.0 * x as f64)/((max_acc - 1) as f64);
      // let acc = -0.0225 + (0.0225*2.0 * x as f64)/(500 as f64);
-         let _sumd : Vec<f64> = (1..=max_sigma_index).into_iter().map(|sg| {
-            let jitter_sigma = sg as f64/max_sigma_index as f64; 
+         let _sumd : Vec<f64> = (0..=max_sigma_index).into_iter().map(|sg| {
+            let jitter_sigma = 0.25*sg as f64/max_sigma_index as f64; 
 
             for _count in 0..averaging_number {
                let mut jittery_latt = JitteryLattice::new( acc, latdep, jitter_sigma);
