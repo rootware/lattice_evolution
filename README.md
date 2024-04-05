@@ -27,3 +27,5 @@ There are three example notebooks for this:
 - Comparing Bayesian between two sequences
 
 While the notebooks may illustrate multiple different ways of plotting, recommend using them only as illustrative examples. Use the `Sequence2param.py` and `Units.py` files when doing your own plots for consistency.
+
+### Statistical Tools
