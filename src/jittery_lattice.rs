@@ -2,7 +2,7 @@ use num_complex::Complex64;
 use nalgebra::{ DMatrix,DVector};
 use std::f64::consts::PI;
 use rand_distr::{Normal, Distribution};
-use rand::Rng;
+// use rand::Rng;
 
 const N_STATES : usize = 11; // Size of matrices
 const MASS: f64 = 1.0;
