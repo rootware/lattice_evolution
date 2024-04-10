@@ -13,4 +13,4 @@ We note that for the previous runs, we had:
 ### Setting up new run
 1. We use the same outcomes that were used in previous runs. We currently have `500.txt` and `2000.txt` for both MP and SP.
 2. I need to install Python lol
-3. 
+3. Try halving grid spacing
