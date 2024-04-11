@@ -1,14 +1,15 @@
 pub mod jittery_lattice;
 pub mod lattice;
 pub mod statistics;
-
+pub mod read_test;
 /*use plotly::common::{
    ColorScale, ColorScalePalette, DashType, Fill, Font, Line, LineShape, Marker, Mode, Title,
 };*/
 use rayon::prelude::*;
 use num_complex::Complex64;
-
+use ndarray::Array2;
 use lattice::Lattice;
+use read_test::{load_data};
 // use jittery_lattice::JitteryLattice;
 // use statistics::jenson_shannon_divergence;
 
@@ -67,6 +68,7 @@ fn main() {
 
    let latt_shaking : Vec<f64> =  sp_shaking; //In ideal Rust, you could handle this via enums
    
+   /* 
    // Create file
    let _file2 = File::create("./SP_Bayesianpriors_FinerRun/test.txt").unwrap();
 
@@ -131,5 +133,7 @@ fn main() {
       bar.inc(1); acc}).collect();
 
 
-   
+   */
+  let mydata : Array2<f64> = load_data();
+  println!("{}", mydata);
 }

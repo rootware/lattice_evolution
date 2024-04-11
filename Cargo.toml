@@ -14,3 +14,5 @@ indicatif = {version = "*", features = ["rayon"]}
 rand_distr = "0.4.3"
 rand = "0.8.5"
 plotly = "0.8.4"
+ndarray-csv = "0.5.2"
+csv = "1.1"
