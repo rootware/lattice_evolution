@@ -14,3 +14,9 @@ We note that for the previous runs, we had:
 1. We use the same outcomes that were used in previous runs. We currently have `500.txt` and `2000.txt` for both MP and SP.
 2. I need to install Python lol
 3. Try halving grid spacing
+
+Attempted 1001x101 $(a,V)$ run: was aborted, and took too long. See `interrupted_test.txt`.
+
+Try now run with 501x101 but in $a \in \pm 0.01 \omega_r v_r$ 
+
+
