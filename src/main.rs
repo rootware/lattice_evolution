@@ -1,28 +1,18 @@
-pub mod jittery_lattice;
 pub mod lattice;
-pub mod statistics;
-pub mod read_test;
-use rand::prelude::*;
-use std::iter::*;
-/*use plotly::common::{
-   ColorScale, ColorScalePalette, DashType, Fill, Font, Line, LineShape, Marker, Mode, Title,
-};*/
+use nalgebra::DVector;
+use num_complex::Complex64;
+use lattice::Lattice;
 use rayon::prelude::*;
+use std::f64::consts::PI;
 
-use ndarray::{Array1,Array2, Array3};
-// use jittery_lattice::JitteryLattice;
-// use statistics::jenson_shannon_divergence;
-
-
+use std::fs::OpenOptions;
 use std::fs::File;
-use ndarray_npy::{read_npy, write_npy};
-use ndarray::s;
-
+use std::io::Write;
+use std::sync::Mutex;
 use indicatif::ProgressBar;
 use indicatif::ProgressStyle;
 
-use std::io::{BufReader, BufRead};
-// use random_choice::random_choice;
+
 
 /// This const is usually used to fix $\omega$ for our shaking functions 
 /// to be $\omega=11.5\omega_r$, since we only vary the amplitude of the shaking function in this RL.
@@ -43,81 +33,77 @@ const TOGGLE_INIT : f64 = 1.0;
 /// [acc index, lattice index, acceleration $a$ , lattice depth $V_0$ , P(p|a,V_0$ ]
 fn main() {
 
-   let alist :  Array1<f64> = read_npy("./SP_Bayesianpriors_FinerRun/acceleration.npy").unwrap();
-   let vlist : Array1<f64> = read_npy("./SP_Bayesianpriors_FinerRun/latticedepth.npy").unwrap();
+   // hard code our shaking sequence
+   let latt_shaking : Vec<f64> = vec![1.83259571, 1.83259571, 1.83259571, 1.83259571, 1.83259571, 1.83259571, 1.04719755, 1.04719755, 1.04719755,
+   0., 0., 0.52359878, 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.26179939, 0., 0., 0., 0., 0., 0., 0., 0.];
+   // Create file
+   let _file2 = File::create("./testing_cfi_lattice/test_longer_withqfi.txt").unwrap();
 
-   let avlistindex : Array2<i64> = read_npy("./SP_Bayesianpriors_FinerRun/AVIndex.npy").unwrap();
+   // Open file
+   let file = OpenOptions::new()
+      .write(true)
+      .append(true)
+      .open("./testing_cfi_lattice/test_longer_withqfi.txt").unwrap();
 
-   let momprob : Array2<f64> = read_npy("./SP_Bayesianpriors_FinerRun/MomProb.npy").unwrap();
-   let datamom : Array3<f64> = read_npy("./SP_Bayesianpriors_FinerRun/datamom.npy").unwrap();
+   // Wrap file in Mutex for thread safety
+   let file = Mutex::new(file);
 
-   let mut prob_av : Array2<f64> = Array2::<f64>::ones( (alist.len(), vlist.len()));
-   prob_av  /= prob_av.sum();
+   // We multithread iterator over acceleration, but not lattice depth. 
+   // Sufficient for my laptop/desktop.
+   println!("Testing CFI calculations using the augmented state method");
 
-   let prob_actual = datamom.slice(s![alist.len()/2+1,vlist.len()/2+1, ..]).into_owned();
+   let no_of_runs : u64 = 100; 
 
-   /* 
-   let mut samples = vec![0,1,2,3,4,5,6,7,8,9,10];
-   let mut mychoices : Vec<(i32,f64)>= Vec::new();
-   
-   for i in samples {
-      mychoices.push ( (i, prob_actual[i as usize]));
-
-   }
-   
-   let mut rng = thread_rng();
-   // 50% chance to print 'a', 25% chance to print 'b', 25% chance to print 'c'
-   let outcomes = mychoices.choose_weighted(&mut rng, |item| item.1).unwrap().0;
-   println!("{:#?}",outcomes);
-   */
-
-   // Read same file as the Bayesian code
-
-   let file =  File::open("./Data/Rust_Runs/SPvMPBayesian/SP_acc_multiparamBayesianpriors/500.txt").unwrap();
-   let reader = BufReader::new(file);
-
-   let outcomes: Vec<i32> = reader
-   .lines()
-   .map(|line| line.unwrap().parse::<f64>().unwrap() as i32)
-   .collect();
-
-   let bar = ProgressBar::new(outcomes.len() as u64);
+   let bar = ProgressBar::new(no_of_runs );
    bar.set_style(ProgressStyle::with_template("[{elapsed_precise}] {wide_bar:100.cyan/blue} {pos:>7}/{len:7} {msg}")
     .unwrap()
     .progress_chars("##-"));
 
-
-
-   let mut counter = 0;
-
-   for outcome in outcomes {
-      // let _dummy :Vec<usize>= (0..alist.len() ).into_par_iter().map(|a_index| {
-
-      /* 
-      let accbar = ProgressBar::new(alist.len() as u64);
-      accbar.set_style(ProgressStyle::with_template("[{elapsed_precise}] {wide_bar:100.cyan/blue} {pos:>7}/{len:7} {msg}")
-         .unwrap()
-         .progress_chars("##-"));
-
+   let tof = PI/11.5 *32.0;
+   let f_mz = ( 4.0 * 2.0 * tof.powi(2) ).powi(2)/4.0;
+   println!("{}", f_mz);
+   
+   let _sum : Vec<f64> = (0..no_of_runs).into_par_iter().map(|y| {
+     // let acc = -0.00225 + (0.00225*2.0 * x as f64)/(1000 as f64);
+     let x = 0;
+     let acc = 0.0;
+        let latdep : f64 =  9.0 + (2.0* y as f64)/(no_of_runs as f64);
+ 
       
-      for a_index in 0..alist.len() {
-         for v_index in 0..vlist.len() {
-            prob_av[[ a_index, v_index]] *= datamom[[ a_index, v_index, outcome as usize ]];
-            prob_av /= prob_av.sum();
+
+
+         let mut latt = Lattice::new(acc, latdep);
+
+         let mut sign = TOGGLE_INIT;
+         for ampl in &latt_shaking{
+             latt.step( *ampl*sign, FREQ);
+             sign *= -1.0;
+         };
+
+
+         let result = vec![latt.depth_cfi() , latt.depth_qfi()];
+         let mut s = String::new();
+         s =  s + &format!("{x}\t{y}\t");
+         s =  s + &format!("{acc}\t{latdep}\t");
+
+
+         for num in result {
+            s.push_str(&num.to_string());
+            s.push_str("\t");
          }
-        accbar.inc(1);
-      };
+         s.push_str("\n");
 
-      */
+         file.lock()
+         .unwrap()
+         .write_all( s.as_bytes())
+         .unwrap();
 
-      prob_av = &prob_av* datamom.slice( s![..,..,outcome as usize]).into_owned();
-      prob_av/= prob_av.sum();
+         
+      
+      
+      bar.inc(1); acc}).collect();
 
-      bar.inc(1);
-      counter +=1;
-      if counter == 50 {
-         write_npy("./SP_Bayesianpriors_FinerRun/N50.npy", &prob_av).unwrap();
-      }
 
-   }
+
+   
 }
