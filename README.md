@@ -7,8 +7,11 @@ This project began as a learning experience: to code the C++ version (see Github
 - The Obsidian folder contains notes for project in Markdown.
 
 ### Planned Updates:
-- Adding augmented state evolution to code.
-- Moving Bayesian updating to Rust from Python as well.
+- Adding augmented state evolution to code (done)
+- Moving Bayesian updating to Rust from Python as well (mostly done)
+- Code for `Jittery Lattice` (done)
+- Separate module for importing shaking sequences as static variables (done. However, a lot of old files archived in Data rely on entering hard coded sequences)
+- Statistics module in Rust for calculating divergences etc.
 
 ## Using Code
 The code is pretty simple.
