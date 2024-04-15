@@ -1,11 +1,15 @@
 pub mod lattice;
 pub mod shaking_sequences;
+pub mod units;
+pub mod jittery_lattice;
 use nalgebra::DVector;
 use num_complex::Complex64;
 use lattice::Lattice;
 use rayon::prelude::*;
 use std::f64::consts::PI;
 
+use jittery_lattice::*;
+use units::*;
 use std::fs::OpenOptions;
 use std::fs::File;
 use std::io::Write;

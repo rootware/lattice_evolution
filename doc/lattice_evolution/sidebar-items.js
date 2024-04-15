@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"constant":["FREQ","TOGGLE_INIT"],"fn":["main"],"mod":["lattice","shaking_sequences"]};
+window.SIDEBAR_ITEMS = {"constant":["FREQ","TOGGLE_INIT"],"fn":["main"],"mod":["jittery_lattice","lattice","shaking_sequences","units"]};

@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":["MASS","N_STATES","N_STEPS"],"struct":["JitteryLattice"]};
