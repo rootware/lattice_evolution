@@ -3,7 +3,8 @@ use nalgebra::{   DMatrix, DVector};
 const N_STATES : usize = 11; // Size of matrices
 use std::f64::consts::PI;
 const MASS: f64 = 1.0;
-const N_STEPS : i128 = 10000;
+const N_STEPS : i128 = 100000;
+use itertools::izip;
 
 /// Lattice struct represents an instance of the Shaken Optical Lattice
 #[derive(Debug)]
@@ -274,5 +275,32 @@ impl Lattice {
         p_v
 
 
+    }
+
+    pub fn acc_depth_cfi(&self) -> f64 {
+        let dpsi_v_c = self.dpsi_v.clone();
+        let psi_c = self.psi.clone();
+
+        let dpsi_a_c = self.dpsi_a.clone();
+
+        let dp_v = dpsi_v_c.iter().zip(psi_c.iter()).map(|(&dp, &p)|
+        { 2.0*(dp*p.conj()).re  }).collect::<Vec<f64>>();
+
+        let dp_a = dpsi_a_c.iter().zip(psi_c.iter()).map(|(&dp, &p)|
+        { 2.0*(dp*p.conj()).re  }).collect::<Vec<f64>>();
+
+        /*let i_av : f64 = dp_a.iter().zip( dp_v.iter()).zip(psi_c.iter()).map( |(&dpa , &dpv, &p)| {
+            dpa*dpv/p.norm_sqr()
+        }).collect::<Vec<f64>>().iter().sum();*/
+
+        let mut i_av = 0.0;
+
+        for (dpa, dpv, p) in izip!( dp_a.iter(), dp_v.iter(), psi_c.iter()) {
+            i_av += dpa*dpv/p.norm_sqr();
+        }
+        
+        i_av
+
+        
     }
 }
