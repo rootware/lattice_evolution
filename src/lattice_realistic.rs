@@ -6,7 +6,9 @@ use std::f64::consts::PI;
 const N_STATES : usize = 9; // Size of matrices
 const MASS: f64 = 1.0;
 const N_STEPS : i128 = 100000;
-const N_FINE_MOMENTUM: i128 = 1000;
+const N_FINE_MOMENTUM: usize = 96*8;
+
+const SIGMA_P : f64 = 0.1;
 /// Lattice struct represents an instance of the Shaken Optical Lattice
 #[derive(Debug)]
 pub struct Realistic_Lattice {
@@ -33,6 +35,12 @@ pub struct Realistic_Lattice {
 }
 
 impl Realistic_Lattice {
+
+
+    /// Get Delta_p
+    pub fn get_delta_p(&self) -> f64 {
+        self.delta_p
+    }
 
     /// Returns $a$ of this Lattice
     pub fn get_acceleration(&self) -> f64 {
@@ -143,7 +151,7 @@ impl Realistic_Lattice {
         let max_p: f64 = (N_STATES as f64)-1.0 ; 
 
         let diagonal = DVector::<Complex64>::from_vec( (0..N_FINE_MOMENTUM+1).map(|i| {
-            Complex64::new(-max_p+ i*delta_p, 0.0)//remove self.q
+            Complex64::new(-max_p+ i as f64*self.delta_p, 0.0)//remove self.q
         }).collect() );
         // Is there an easier way to convert the f64 diagonal into a Complex valued array?
 
@@ -171,7 +179,7 @@ impl Realistic_Lattice {
         let k2 = self.update(self.psi.clone() + &k1*Complex64::from(dt/2.0) , amplitude, omega, t+dt/2.0);
         let k3 = self.update(self.psi.clone() + &k2*Complex64::from(dt/2.0) , amplitude, omega, t+dt/2.0);
         let k4 = self.update(self.psi.clone() + &k3*Complex64::from(dt) , amplitude, omega, t+dt);
-
+/* 
         let k1_da = self.update_da(self.dpsi_a.clone(), self.psi.clone(), amplitude, omega, t);
         let k2_da= self.update_da(self.dpsi_a.clone() + &k1_da*Complex64::from(dt/2.0) ,self.psi.clone()+ &k1*Complex64::from(dt/2.0), amplitude, omega, t+dt/2.0);
         let k3_da = self.update_da(self.dpsi_a.clone() + &k2_da*Complex64::from(dt/2.0) , self.psi.clone()+&k2*Complex64::from(dt/2.0) ,amplitude, omega, t+dt/2.0);
@@ -181,10 +189,10 @@ impl Realistic_Lattice {
         let k2_d_v= self.update_d_v(self.dpsi_v.clone() + &k1_d_v*Complex64::from(dt/2.0) ,self.psi.clone()+ &k1*Complex64::from(dt/2.0), amplitude, omega, t+dt/2.0);
         let k3_d_v = self.update_d_v(self.dpsi_v.clone() + &k2_d_v*Complex64::from(dt/2.0) , self.psi.clone()+&k2*Complex64::from(dt/2.0) ,amplitude, omega, t+dt/2.0);
         let k4_d_v = self.update_d_v(self.dpsi_v.clone() + &k3_d_v*Complex64::from(dt) , self.psi.clone()+&k3*Complex64::from(dt),amplitude, omega, t+dt);
-
+*/
         self.psi = &self.psi + ( k1 + k2*Complex64::from(2.0) + k3*Complex64::from(2.0) + k4)*Complex64::from(dt/6.0);
-        self.dpsi_a = &self.dpsi_a + ( k1_da + k2_da*Complex64::from(2.0) + k3_da*Complex64::from(2.0) + k4_da)*Complex64::from(dt/6.0);
-        self.dpsi_v = &self.dpsi_v + ( k1_d_v + k2_d_v*Complex64::from(2.0) + k3_d_v*Complex64::from(2.0) + k4_d_v)*Complex64::from(dt/6.0);
+//        self.dpsi_a = &self.dpsi_a + ( k1_da + k2_da*Complex64::from(2.0) + k3_da*Complex64::from(2.0) + k4_da)*Complex64::from(dt/6.0);
+ //       self.dpsi_v = &self.dpsi_v + ( k1_d_v + k2_d_v*Complex64::from(2.0) + k3_d_v*Complex64::from(2.0) + k4_d_v)*Complex64::from(dt/6.0);
 
         //self.accelerate(-MASS*self.g*dt);
     }
@@ -198,22 +206,27 @@ impl Realistic_Lattice {
     /// 
     /// By default, the const N_STATES defines how many momentum states are included in the
     /// simulation basis. So N_STATES=11 means $p\in \{-10\hbark_L, -8\hbar k_L, ..., 10\hbar k_L\}$
-    pub fn new(acceleration: f64, latticedepth: f64) -> Realistic_LatticeLattice {
+    pub fn new(acceleration: f64, latticedepth: f64) -> Realistic_Lattice {
         let max_p: f64 = (N_STATES as f64)-1.0 ; 
-        let delta_p_index = N_FINE_MOMENTUM/(N_STATES - 1);
-        let delta_p = (N_STATES-1)*2 as f64 / (N_FINE_MOMENTUM  as f64);
-
+        let delta_p_index = (N_FINE_MOMENTUM as i128/(N_STATES as i128 - 1)) as usize;
+        let delta_p = (N_STATES-1) as f64 *2.0/ (N_FINE_MOMENTUM  as f64);
+        println!("{delta_p}, {delta_p_index}");
         let diagonal = DVector::<Complex64>::from_vec( (0..N_FINE_MOMENTUM+1).map(|i| {
-            Complex64::new((-max_p+ i*delta_p).powi(2), 0.0)
+            Complex64::new((-max_p+ i as f64*delta_p).powi(2), 0.0)
         }).collect() );
         // Is there an easier way to convert the f64 diagonal into a Complex valued array?
 
         let h0 = DMatrix::<Complex64>::from_diagonal( &diagonal);
 
+        let offset_vec  = DVector::<Complex64>::from_vec( (0..N_FINE_MOMENTUM+1).map(|i| {
+            Complex64::new(0.0, 0.0)
+        }).collect() );
+        let offset =DMatrix::<Complex64>::from_diagonal( &offset_vec);
+
 
         let mut h2 = DMatrix::from_element(N_FINE_MOMENTUM+1 ,N_FINE_MOMENTUM +1 , Complex64::new(0.0,0.0)); 
 
-        let mut  h1 = DMatrix::from_element(N_FINE_MOMENTUM+1,N_FINE_MOMENTUM, Complex64::new(0.0,0.0)); 
+        let mut  h1 = DMatrix::from_element(N_FINE_MOMENTUM+1,N_FINE_MOMENTUM+1, Complex64::new(0.0,0.0)); 
         let depth =  latticedepth;
         for i in 0..(N_FINE_MOMENTUM+1){
 
@@ -225,15 +238,40 @@ impl Realistic_Lattice {
                 h1[(i+delta_p_index,i)] += Complex64::new(0.0, -depth/4.0);
             }
         }
-        let hamiltonian = &h0 - &h2;
 
-        let eigvec = -hamiltonian.symmetric_eigen().eigenvectors;
-        let mut psitemp : DVector<Complex64>= eigvec.column(1).into();
-        if psitemp[5].re <= 0.0 {
-            psitemp = &psitemp*Complex64::from(-1.0);
-        };
+
+        let mut psitemp : DVector<Complex64>= DVector::from_element( N_FINE_MOMENTUM+1,Complex64::new(0.0,0.0) );
+        
+
+     //   println!("{}", (&h0-&h2+&offset).symmetric_eigen().eigenvalues);
+     //   println!("{}", (&h0-&h2+&offset).symmetric_eigen().eigenvectors.column(1));
+     //   let eigv=(&h0-&h2).symmetric_eigen().eigenvectors;
+        let ground_state = vec![ 0.0001265523919516028 ,
+         0.0033487321195564265,
+           0.05097922316699938,
+            0.3668232006272171,
+           0.8518575330001764,
+           0.3668232006272265,
+          0.05097922316700132,
+         0.0033487321195565883,
+         0.0001265523919514923];
+
+
+
+        for i in 0..N_STATES {
+            let myindex = i *N_FINE_MOMENTUM /(N_STATES -1);
+          //  psitemp[myindex]=Complex64::new(ground_state[i], 0.0) ;
+           // psitemp[i] *=  Complex64::new(f64::exp( - ((-max_p + delta_p*(i as f64))/SIGMA_P  ).powi(2) ), 0.0)  ;
+            let current_height = Complex64::new(ground_state[i], 0.0) ;
+            for n in 0..=N_FINE_MOMENTUM {
+               psitemp[n]+= current_height*Complex64::new(f64::exp( - ((delta_p*(n as f64 -myindex as f64))/SIGMA_P  ).powi(2) ), 0.0) ;
+            }
+        }
+
+        psitemp /= Complex64::new(psitemp.norm(), 0.0);
 
         
+       // println!("{}", &h0);
         Self {
             g: acceleration,
             q: 0.0,
@@ -257,7 +295,7 @@ impl Realistic_Lattice {
     }
 }
 
-impl Lattice {
+impl Realistic_Lattice {
 
     pub fn acc_qfi(&self)-> f64 {
         let dpsi_a_c = self.dpsi_a.clone();

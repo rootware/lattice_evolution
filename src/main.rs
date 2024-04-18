@@ -1,32 +1,28 @@
-pub mod lattice;
-pub mod shaking_sequences;
+pub mod lattice_realistic;
+pub mod read;
 pub mod units;
-pub mod jittery_lattice;
-use nalgebra::DVector;
+pub mod shaking_sequences;
 use num_complex::Complex64;
-use lattice::Lattice;
+use lattice_realistic::Realistic_Lattice;
+use read::read;
 use rayon::prelude::*;
+use shaking_sequences::shaking::MP_SHAKING;
 use std::f64::consts::PI;
-
-use jittery_lattice::*;
-use units::*;
 use std::fs::OpenOptions;
 use std::fs::File;
 use std::io::Write;
 use std::sync::Mutex;
 use indicatif::ProgressBar;
 use indicatif::ProgressStyle;
-use shaking_sequences::shaking::*;
+
+// use rustfft::{FftPlanner, num_complex::Complex};
 
 
 /// This const is usually used to fix $\omega$ for our shaking functions 
 /// to be $\omega=11.5\omega_r$, since we only vary the amplitude of the shaking function in this RL.
 const FREQ: f64 = 11.5;
 
-/// Decide if we first shake to the +ve or -ve x direction.
-/// Each subsequent shaking has opposite sign.
-const TOGGLE_INIT : f64 = 1.0;
-
+const TOGGLE_INIT: f64 = 1.0;
 
 /// #Description of code:
 /// 
@@ -38,85 +34,122 @@ const TOGGLE_INIT : f64 = 1.0;
 /// [acc index, lattice index, acceleration $a$ , lattice depth $V_0$ , P(p|a,V_0$ ]
 fn main() {
 
-   // hard code our shaking sequence
-   let latt_shaking : Vec<f64> = SP_SHAKING.to_vec();/*[1.83259571, 0., 1.83259571, 2.87979327, 1.83259571, 1.83259571, 1.83259571, 3.40339204, 3.66519143,
-   3.40339204, 3.40339204, 3.14159265, 3.92699082, 3.92699082, 2.35619449, 2.35619449, 3.92699082, 3.92699082,
-   3.92699082, 3.66519143, 3.66519143, 3.66519143, 2.61799388, 3.66519143, 1.57079633, 1.57079633, 1.57079633,
-   1.04719755, 1.04719755, 1.04719755, 1.04719755, 1.57079633];//Option2 acc*/
+// Acceleration is currently disabled
+
+    // Create file
+    let file = File::create("./plot_finer/test.txt").unwrap();
+
+    // Open file
+    let mut file = OpenOptions::new()
+        .write(true)
+        .append(true)
+        .open("./plot_finer/test.txt").unwrap();
+
+
+
+    // We multithread iterator over acceleration, but not lattice depth. 
+    // Sufficient for my laptop/desktop.
 
 
 
 
-   // Create file
-   let _file2 = File::create("./testing_cfi_lattice/test_short_withqfi_Option2temp.txt").unwrap();
-
-   // Open file
-   let file = OpenOptions::new()
-      .write(true)
-      .append(true)
-      .open("./testing_cfi_lattice/test_short_withqfi_Option2temp.txt").unwrap();
-
-   // Wrap file in Mutex for thread safety
-   let file = Mutex::new(file);
-
-   // We multithread iterator over acceleration, but not lattice depth. 
-   // Sufficient for my laptop/desktop.
-   println!("Testing CFI calculations using the augmented state method");
-
-   let no_of_runs : u64 = 5;//100; 
-
-   let bar = ProgressBar::new(no_of_runs );
-   bar.set_style(ProgressStyle::with_template("[{elapsed_precise}] {wide_bar:100.cyan/blue} {pos:>7}/{len:7} {msg}")
+    let acc = 0.0;
+    let latdep = 10.0;
+    
+    let shakingfunction : Vec<f64> = MP_SHAKING.to_vec();
+    let bar = ProgressBar::new(shakingfunction.len() as u64);
+    bar.set_style(ProgressStyle::with_template("[{elapsed_precise}] {wide_bar:100.cyan/blue} {pos:>7}/{len:7} {msg}")
     .unwrap()
     .progress_chars("##-"));
 
-   let tof = PI/11.5 *32.0;
-   let f_mz = ( 4.0 * 2.0 * tof.powi(2) ).powi(2)/4.0;
-   println!("{}", f_mz);
-   
-   let _sum : Vec<f64> = (0..no_of_runs).into_par_iter().map(|y| {
-     // let acc = -0.00225 + (0.00225*2.0 * x as f64)/(1000 as f64);
-     let x = 0;
-     let acc = 0.0;
-        let latdep : f64 =  9.0 + (2.0* y as f64)/(no_of_runs as f64 - 1.0);
- 
-      
 
+    let mut latt = Realistic_Lattice::new(acc, latdep);
 
-         let mut latt = Lattice::new(acc, latdep);
+        //----------------------
+    let mut index: usize = 0;
+    let mut total_time = 0.0;// just for consistency, compiler will complain, ideally should be 0.0
 
-         let mut sign = TOGGLE_INIT;
-         for ampl in &latt_shaking{
-             latt.step( *ampl*sign, FREQ);
-             sign *= -1.0;
-         };
-
-         
-         let mut result = vec![latt.acc_cfi(), latt.depth_cfi() , latt.acc_depth_cfi(), latt.depth_qfi()];
-         let corr_ratio = result[2]/(result[1]*result[0]).sqrt();
-         result.push(corr_ratio);
-         let mut s = String::new();
-         s =  s + &format!("{x}\t{y}\t");
-         s =  s + &format!("{acc}\t{latdep}\t");
-
-
-         for num in result {
-            s.push_str(&num.to_string());
-            s.push_str("\t");
-         }
-         s.push_str("\n");
-
-         file.lock()
-         .unwrap()
-         .write_all( s.as_bytes())
-         .unwrap();
-
-         
-      
-      
-      bar.inc(1); acc}).collect();
+    println!("Begin Shaking");
 
 
 
+    let momentum : Vec<f64>= latt.get_momentum().data.into();
+  //  let p_prob = latt.get_psi();
+    let mut s = String::new();
+    s =  s + &format!("{acc},{latdep},{total_time}, 0.0");
+
+
+    for num in momentum {
+        s.push_str(",");
+        s.push_str(&num.to_string());
+    }
+    s.push_str("\n");
+
+    file
+    .write_all( s.as_bytes())
+    .unwrap();
+    println!("{}", latt.get_psi());
+
+
+    let mut sign : f64 = TOGGLE_INIT;
+    for ampl in &shakingfunction{
+    //  total_time = time_val[index]/units::TIME_UNIT;
+        latt.set_time(total_time);
+
+
+
+        let mut time : f64 = 0.0;
+        let period : f64 = PI/FREQ; // 50ns in code units    
+        let no_iter = 100; // small
+        let mut it = 0;
+        let dt = period/(no_iter as f64);
+        let A = *ampl;
+
+
+        while it < no_iter {
+            let amplitude = sign*A*f64::sin(FREQ*time);
+            latt.rk4step( dt,  amplitude, FREQ, time);
+            it+=1; time +=dt;
+
+
+
+           // let momentum : Vec<f64>= latt.get_momentum().data.into();
+           let p_prob = latt.get_psi();
+        //   let mut planner = FftPlanner::<f32>::new();
+         //  let fft = planner.plan_fft_forward(p_prob.len());
+           
+         //  let data: Vec<Complex64> = p_prob.as_array();
+           //let mut buffer = data;
+           
+          // fft.process(&mut buffer);
+            
+            let mut s = String::new();
+            s =  s + &format!("{acc},{latdep},{}, {}", total_time+time, amplitude);
+
+
+
+
+            for num in p_prob.iter() {
+                s.push_str(",");
+                //s.push_str(&num.to_string());
+                s= s + &format!("{}+{}j",num.re, num.im );
+            }
+            s.push_str("\n");
+
+            file
+            .write_all( s.as_bytes())
+            .unwrap();
+
+
+        }
+        total_time += PI/FREQ;
+        index+=1;
+        sign *= -1.0;
+        bar.inc(1);
+
+
+    //-----------------------------
+    }
+    println!("{}", latt.get_delta_p());
    
 }
