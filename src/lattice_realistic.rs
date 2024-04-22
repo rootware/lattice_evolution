@@ -362,3 +362,15 @@ impl Realistic_Lattice {
         
     }
 }
+
+impl Realistic_Lattice {
+
+    pub fn toggle_begin_tof(&mut self) {
+        self.h2 = DMatrix::from_element(N_FINE_MOMENTUM+1 ,N_FINE_MOMENTUM +1 , Complex64::new(0.0,0.0)); 
+
+        self.h1 = DMatrix::from_element(N_FINE_MOMENTUM+1,N_FINE_MOMENTUM+1, Complex64::new(0.0,0.0)); 
+        self.depth =  0.0;
+    }
+
+
+}
