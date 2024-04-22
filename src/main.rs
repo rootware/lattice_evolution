@@ -156,7 +156,7 @@ fn main() {
     println!("Begin Time of Flight Now");
     latt.toggle_begin_tof();
    
-    let tof_time : f64 = 20.0*period;
+    let tof_time : f64 = 50.0*period;
     let A = 0.0;
 
     let mut time = 0.0;
