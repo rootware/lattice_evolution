@@ -156,8 +156,10 @@ fn main() {
     println!("Begin Time of Flight Now");
     latt.toggle_begin_tof();
    
-    let tof_time : f64 = 50.0*period;
+    let no_of_half_periods : u64 = 50;
+    let tof_time : f64 = no_of_half_periods as f64 * period;
     let A = 0.0;
+
 
     let mut time = 0.0;
 
@@ -180,6 +182,7 @@ fn main() {
         file
         .write_all( s.as_bytes())
         .unwrap();
+        
     }
 
     
