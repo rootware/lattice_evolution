@@ -36,14 +36,15 @@ fn main() {
 
 // Acceleration is currently disabled
 
+    println!("Creating New test.txt for Data");
     // Create file
-    let file = File::create("./plot_finer/test.txt").unwrap();
+    let file = File::create("./plot_finer/test_with_tof.txt").unwrap();
 
     // Open file
     let mut file = OpenOptions::new()
         .write(true)
         .append(true)
-        .open("./plot_finer/test.txt").unwrap();
+        .open("./plot_finer/test_with_tof.txt").unwrap();
 
 
 
@@ -51,8 +52,7 @@ fn main() {
     // Sufficient for my laptop/desktop.
 
 
-
-
+    println!("Initializing Lattice");
     let acc = 0.0;
     let latdep = 10.0;
     
@@ -69,29 +69,32 @@ fn main() {
     let mut index: usize = 0;
     let mut total_time = 0.0;// just for consistency, compiler will complain, ideally should be 0.0
 
-    println!("Begin Shaking");
+    println!("Record t=0 info");
 
-
-
-    let momentum : Vec<f64>= latt.get_momentum().data.into();
-  //  let p_prob = latt.get_psi();
+    let p_prob = latt.get_psi();
     let mut s = String::new();
     s =  s + &format!("{acc},{latdep},{total_time}, 0.0");
 
 
-    for num in momentum {
+    for num in  p_prob.iter() {
         s.push_str(",");
-        s.push_str(&num.to_string());
+        //s.push_str(&num.to_string());
+        s= s + &format!("{}+{}j",num.re, num.im );
     }
     s.push_str("\n");
 
     file
     .write_all( s.as_bytes())
     .unwrap();
-    println!("{}", latt.get_psi());
+   // println!("Initial Wavepacket: {}", latt.get_psi());
 
-
+    let no_iter = 100; // small
+    let period : f64 = PI/FREQ; // 50ns in code units   
+    let dt = period/(no_iter as f64);
+ 
     let mut sign : f64 = TOGGLE_INIT;
+
+    println!("Begin Shaking");
     for ampl in &shakingfunction{
     //  total_time = time_val[index]/units::TIME_UNIT;
         latt.set_time(total_time);
@@ -99,10 +102,7 @@ fn main() {
 
 
         let mut time : f64 = 0.0;
-        let period : f64 = PI/FREQ; // 50ns in code units    
-        let no_iter = 100; // small
         let mut it = 0;
-        let dt = period/(no_iter as f64);
         let A = *ampl;
 
 
@@ -114,7 +114,7 @@ fn main() {
 
 
            // let momentum : Vec<f64>= latt.get_momentum().data.into();
-           let p_prob = latt.get_psi();
+           let p_prob: nalgebra::Matrix<nalgebra::Complex<f64>, nalgebra::Dyn, nalgebra::Const<1>, nalgebra::VecStorage<nalgebra::Complex<f64>, nalgebra::Dyn, nalgebra::Const<1>>> = latt.get_psi();
         //   let mut planner = FftPlanner::<f32>::new();
          //  let fft = planner.plan_fft_forward(p_prob.len());
            
@@ -150,6 +150,38 @@ fn main() {
 
     //-----------------------------
     }
-    println!("{}", latt.get_delta_p());
+
+    println!("End Shaking");
+    
+    println!("Begin Time of Flight Now");
+    latt.toggle_begin_tof();
    
+    let tof_time : f64 = 20.0*period;
+    let A = 0.0;
+
+    let mut time = 0.0;
+
+    while time < tof_time {
+        latt.rk4step( dt,  A, FREQ, time);
+        time += dt;
+
+        let p_prob = latt.get_psi();
+
+        let mut s = String::new();
+        s =  s + &format!("{acc},{latdep},{}, {}", total_time+time, A);
+
+        for num in p_prob.iter() {
+            s.push_str(",");
+            //s.push_str(&num.to_string());
+            s= s + &format!("{}+{}j",num.re, num.im );
+        }
+        s.push_str("\n");
+
+        file
+        .write_all( s.as_bytes())
+        .unwrap();
+    }
+
+    
+
 }
