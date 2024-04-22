@@ -163,6 +163,15 @@ fn main() {
 
     let mut time = 0.0;
 
+
+    let bar = ProgressBar::new(no_of_half_periods);
+    bar.set_style(ProgressStyle::with_template("[{elapsed_precise}] {wide_bar:100.cyan/blue} {pos:>7}/{len:7} {msg}")
+    .unwrap()
+    .progress_chars("##-"));
+
+    let mut current_period : u64 = 0;
+
+    println!("Half Periods of TOF completed:");
     while time < tof_time {
         latt.rk4step( dt,  A, FREQ, time);
         time += dt;
@@ -182,6 +191,13 @@ fn main() {
         file
         .write_all( s.as_bytes())
         .unwrap();
+
+        let mut num =  (time/(std::f64::consts::PI/11.5)) as u64;
+
+        if num > current_period {
+            current_period = num;
+            println!("{}", current_period);
+        }
         
     }
 

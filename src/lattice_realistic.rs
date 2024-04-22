@@ -6,7 +6,7 @@ use std::f64::consts::PI;
 const N_STATES : usize = 9; // Size of matrices
 const MASS: f64 = 1.0;
 const N_STEPS : i128 = 100000;
-const N_FINE_MOMENTUM: usize = 96*8;
+const N_FINE_MOMENTUM: usize = 192*8;
 
 const SIGMA_P : f64 = 0.1;
 /// Lattice struct represents an instance of the Shaken Optical Lattice
