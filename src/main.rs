@@ -38,13 +38,13 @@ fn main() {
 
     println!("Creating New test.txt for Data");
     // Create file
-    let file = File::create("./plot_finer/test_with_tof.txt").unwrap();
+    let file = File::create("./plot_finer/test_with_tof2.txt").unwrap();
 
     // Open file
     let mut file = OpenOptions::new()
         .write(true)
         .append(true)
-        .open("./plot_finer/test_with_tof.txt").unwrap();
+        .open("./plot_finer/test_with_tof2.txt").unwrap();
 
 
 
@@ -58,9 +58,9 @@ fn main() {
     
     let shakingfunction : Vec<f64> = MP_SHAKING.to_vec();
     let bar = ProgressBar::new(shakingfunction.len() as u64);
-    bar.set_style(ProgressStyle::with_template("[{elapsed_precise}] {wide_bar:100.cyan/blue} {pos:>7}/{len:7} {msg}")
-    .unwrap()
-    .progress_chars("##-"));
+   // bar.set_style(ProgressStyle::with_template("[{elapsed_precise}] {wide_bar:100.cyan/blue} {pos:>7}/{len:7} {msg}")
+   // .unwrap()
+   // .progress_chars("##-"));
 
 
     let mut latt = Realistic_Lattice::new(acc, latdep);
@@ -94,12 +94,12 @@ fn main() {
  
     let mut sign : f64 = TOGGLE_INIT;
 
-    println!("Begin Shaking");
+    println!("Begin Shaking, total time: {total_time}");
     for ampl in &shakingfunction{
     //  total_time = time_val[index]/units::TIME_UNIT;
         latt.set_time(total_time);
 
-
+        println!("{}", total_time);
 
         let mut time : f64 = 0.0;
         let mut it = 0;
@@ -145,13 +145,14 @@ fn main() {
         total_time += PI/FREQ;
         index+=1;
         sign *= -1.0;
-        bar.inc(1);
+        
+        //bar.inc(1);
 
 
     //-----------------------------
     }
 
-    println!("End Shaking");
+    println!("End Shaking: total time: {total_time}");
     
     println!("Begin Time of Flight Now");
     latt.toggle_begin_tof();
