@@ -2,18 +2,13 @@ pub mod lattice_realistic;
 pub mod read;
 pub mod units;
 pub mod shaking_sequences;
-use num_complex::Complex64;
 use lattice_realistic::Realistic_Lattice;
-use read::read;
-use rayon::prelude::*;
 use shaking_sequences::shaking::MP_SHAKING;
 use std::f64::consts::PI;
 use std::fs::OpenOptions;
 use std::fs::File;
 use std::io::Write;
-use std::sync::Mutex;
-use indicatif::ProgressBar;
-use indicatif::ProgressStyle;
+
 
 // use rustfft::{FftPlanner, num_complex::Complex};
 
@@ -57,7 +52,6 @@ fn main() {
     let latdep = 10.0;
     
     let shakingfunction : Vec<f64> = MP_SHAKING.to_vec();
-    let bar = ProgressBar::new(shakingfunction.len() as u64);
    // bar.set_style(ProgressStyle::with_template("[{elapsed_precise}] {wide_bar:100.cyan/blue} {pos:>7}/{len:7} {msg}")
    // .unwrap()
    // .progress_chars("##-"));
@@ -66,7 +60,6 @@ fn main() {
     let mut latt = Realistic_Lattice::new(acc, latdep);
 
         //----------------------
-    let mut index: usize = 0;
     let mut total_time = 0.0;// just for consistency, compiler will complain, ideally should be 0.0
 
     println!("Record t=0 info");
@@ -143,7 +136,6 @@ fn main() {
 
         }
         total_time += PI/FREQ;
-        index+=1;
         sign *= -1.0;
         
         //bar.inc(1);
@@ -157,7 +149,7 @@ fn main() {
     println!("Begin Time of Flight Now");
     latt.toggle_begin_tof();
    
-    let no_of_half_periods : u64 = 50;
+    let no_of_half_periods : u64 = 80;
     let tof_time : f64 = no_of_half_periods as f64 * period;
     let A = 0.0;
 
@@ -165,15 +157,11 @@ fn main() {
     let mut time = 0.0;
 
 
-    let bar = ProgressBar::new(no_of_half_periods);
-    bar.set_style(ProgressStyle::with_template("[{elapsed_precise}] {wide_bar:100.cyan/blue} {pos:>7}/{len:7} {msg}")
-    .unwrap()
-    .progress_chars("##-"));
-
     let mut current_period : u64 = 0;
 
     println!("Half Periods of TOF completed:");
     while time < tof_time {
+
         latt.rk4step( dt,  A, FREQ, time);
         time += dt;
 
@@ -193,11 +181,12 @@ fn main() {
         .write_all( s.as_bytes())
         .unwrap();
 
-        let mut num =  (time/(std::f64::consts::PI/11.5)) as u64;
+        let oof =  (time/(std::f64::consts::PI/11.5)) as u64;
 
-        if num > current_period {
-            current_period = num;
-            println!("{}", current_period);
+        if oof > current_period {
+            current_period = oof;
+            println!("{} and {}", total_time + time, current_period);
+        
         }
         
     }
