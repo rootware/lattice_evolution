@@ -1,9 +1,6 @@
 /target
 /Python/__pycache__
 /Catie
-/plot_finer/test.txt
-/plot_finer/test_with_tof.txt
-/plot_finer/test_with_tof2.txt
-/plot_finer/*
+/Data/Rust_Runs/broad_wavepacket_with_TOF/*
 
 
