@@ -4,14 +4,14 @@ use std::io::Write;
 use std::io::{BufReader, BufRead};
 
 pub fn read() -> (Vec<f64>, Vec<f64>) {
-    let file =  File::open("./Catie/QOCshaking.txt").unwrap();
+    let file =  File::open("./Recom0/combined_shaking.txt").unwrap();
 
 
-    let _file2 = File::create("./Catie/test_read.txt").unwrap();
+    let _file2 = File::create("./Recom0/test_read.txt").unwrap();
     let mut file2 = OpenOptions::new()
     .write(true)
     .append(true)
-    .open("./Catie/test_read.txt").unwrap();
+    .open("./Recom0/test_read.txt").unwrap();
     
     // Create a buffered reader to read lines from the file
     let reader = BufReader::new(file);
@@ -26,15 +26,17 @@ pub fn read() -> (Vec<f64>, Vec<f64>) {
         if let Ok(line) = line {
     
             let mut x = line.split_whitespace();
-            let time_val = x.next().unwrap();
+            // let time_val = x.next().unwrap();
+            let time_val = 50.0e-9/crate::units::TIME_UNIT;
             let shake_val = x.next().unwrap(); 
     
-            if let Ok(num) = time_val.parse::<f64>() {
-                time.push(num*1.0e-3);//values are written in ms, not s
-            } else {
-                eprintln!("Failed to parse float: {}", time_val);
-            }
-    
+            //if let Ok(num) = time_val.parse::<f64>() {
+            //    time.push(num*1.0e-3);//values are written in ms, not s
+            //} else {
+            //    eprintln!("Failed to parse float: {}", time_val);
+            //}
+            time.push(time_val*1.0e-3);
+
             if let Ok(num) = shake_val.parse::<f64>() {
                 shakingfunction.push(num);
             } else {
