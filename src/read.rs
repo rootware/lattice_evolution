@@ -3,8 +3,8 @@ use std::fs::OpenOptions;
 use std::io::Write;
 use std::io::{BufReader, BufRead};
 
-pub fn read() -> (Vec<f64>, Vec<f64>) {
-    let file =  File::open("./Recom0/combined_shaking.txt").unwrap();
+pub fn read(filepath: &str) -> (Vec<f64>, Vec<f64>) {
+    let file =  File::open(filepath).unwrap();
 
 
     let _file2 = File::create("./Recom0/test_read.txt").unwrap();
