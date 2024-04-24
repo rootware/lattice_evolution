@@ -1,24 +1,21 @@
-pub mod lattice_QOC;
+pub mod lattice_realistic;
 pub mod read;
 pub mod units;
-use num_complex::Complex64;
-use lattice_QOC::Lattice;
-use read::read;
-use rayon::prelude::*;
-
+pub mod shaking_sequences;
+use lattice_realistic::Realistic_Lattice;
+use std::f64::consts::PI;
 use std::fs::OpenOptions;
 use std::fs::File;
 use std::io::Write;
-use std::sync::Mutex;
-use indicatif::ProgressBar;
-use indicatif::ProgressStyle;
+use read::read;
+// use rustfft::{FftPlanner, num_complex::Complex};
 
 
 /// This const is usually used to fix $\omega$ for our shaking functions 
 /// to be $\omega=11.5\omega_r$, since we only vary the amplitude of the shaking function in this RL.
 const FREQ: f64 = 11.5;
 
-
+const TOGGLE_INIT: f64 = 1.0;
 
 /// #Description of code:
 /// 
@@ -30,129 +27,172 @@ const FREQ: f64 = 11.5;
 /// [acc index, lattice index, acceleration $a$ , lattice depth $V_0$ , P(p|a,V_0$ ]
 fn main() {
 
-    let (time_val, shakingfunction) = read();
-    assert_eq!(time_val.len(), shakingfunction.len());
+// Acceleration is currently disabled
 
+    println!("Creating New test.txt for Data");
     // Create file
-    let _file1 = File::create("./Recom0/test_longer_withprop.txt").unwrap();
-    let _file2 = File::create("./Recom0/cfi_qfi_longer_withprop.txt").unwrap();
+    let file = File::create("./plot_finer/test_with_tof2.txt").unwrap();
 
     // Open file
-    let file = OpenOptions::new()
+    let mut file = OpenOptions::new()
         .write(true)
         .append(true)
-        .open("./Recom0/test_longer_withprop.txt").unwrap();
+        .open("./plot_finer/test_with_tof2.txt").unwrap();
 
-    // Wrap file in Mutex for thread safety
-    let file = Mutex::new(file);
-
-        // Open file
-    let file2 = OpenOptions::new()
-        .write(true)
-        .append(true)
-        .open("./Recom0/cfi_qfi_longer_withprop.txt").unwrap();
-
-    // Wrap file in Mutex for thread safety
-    let file2 = Mutex::new(file2);
 
 
     // We multithread iterator over acceleration, but not lattice depth. 
     // Sufficient for my laptop/desktop.
-    println!("Generating priors for Jay's sequence");
 
-    let bar = ProgressBar::new(101 );
-    bar.set_style(ProgressStyle::with_template("[{elapsed_precise}] {wide_bar:100.cyan/blue} {pos:>7}/{len:7} {msg}")
-    .unwrap()
-    .progress_chars("##-"));
 
-    let _sum : Vec<f64> = (0..101).into_par_iter().map(|x| {
-     // let acc = -0.00225 + (0.00225*2.0 * x as f64)/(1000 as f64);
-    let acc = -0.1 + (0.1*2.0 * x as f64)/(100 as f64);
-     for y in 0..51 {
-        let latdep : f64 =  9.0 + (2.0* y as f64)/(50 as f64);
+    println!("Initializing Lattice");
+    let acc = 0.0;
+    let latdep = 10.0;
     
+    //let shakingfunction : Vec<f64> = MP_SHAKING.to_vec();
+   // bar.set_style(ProgressStyle::with_template("[{elapsed_precise}] {wide_bar:100.cyan/blue} {pos:>7}/{len:7} {msg}")
+   // .unwrap()
+   // .progress_chars("##-"));
 
+   let (time_val, shakingfunction) = read("./Recom0/combined_shaking.txt");
+   assert_eq!(time_val.len(), shakingfunction.len());
 
-        let mut latt = Lattice::new(acc, latdep);
+    let mut latt = Realistic_Lattice::new(acc, latdep);
 
         //----------------------
-        let mut index: usize = 0;
-        let mut total_time = 0.0;// just for consistency, compiler will complain, ideally should be 0.0
-        let propagatime_time = 100.0e-6/units::TIME_UNIT;
-        let time_of_start_propagation = 117.0e-6/units::TIME_UNIT;
+    let mut total_time = 0.0;// just for consistency, compiler will complain, ideally should be 0.0
+
+    println!("Record t=0 info");
+
+    let p_prob = latt.get_psi();
+    let mut s = String::new();
+    s =  s + &format!("{acc},{latdep},{total_time}, 0.0");
+
+
+    for num in  p_prob.iter() {
+        s.push_str(",");
+        //s.push_str(&num.to_string());
+        s= s + &format!("{}+{}j",num.re, num.im );
+    }
+    s.push_str("\n");
+
+    file
+    .write_all( s.as_bytes())
+    .unwrap();
+   // println!("Initial Wavepacket: {}", latt.get_psi());
+
+    let no_iter = 100; // small
+    let period : f64 = PI/FREQ; // 50ns in code units   
+    let dt = period/(no_iter as f64);
+ 
+    let mut sign : f64 = TOGGLE_INIT;
+
+    println!("Begin Shaking, total time: {total_time}");
+    let mut time = 0.0;
+    for ampl in &shakingfunction{
+    //  total_time = time_val[index]/units::TIME_UNIT;
+        latt.set_time(total_time);
+
+        println!("{}", total_time);
+
+        //let mut time : f64 = 0.0;
         
-        for ampl in &shakingfunction{
-
-          //  total_time = time_val[index]/units::TIME_UNIT;
-            latt.set_time(total_time);
-
-            let amplitude = *ampl;
-
-            let mut time : f64 = 0.0;
-            let period : f64 = 50.0e-9/units::TIME_UNIT; // 50ns in code units    
-            let no_iter = 10; // small
-            let mut it = 0;
-            let dt = period/(no_iter as f64);
+        let mut it = 0;
+        let A = *ampl;
 
 
-            while it < no_iter {
-                latt.rk4step( dt,  amplitude, FREQ, time);
-                it+=1; time +=dt;
-    
-            }
-            total_time += time;
-            index+=1;
+        while it < no_iter {
+            let amplitude = sign*A*f64::sin(FREQ*time);
+            latt.rk4step( dt,  amplitude, FREQ, time);
+            it+=1; time +=dt;
 
 
-  
 
-
-        }
-        if x==1 && y==1 {
-            println!("{}",total_time*units::TIME_UNIT);
-        }
-    //-----------------------------
-
-        let out = latt.get_psi();
-        let momentum_i: Vec<Complex64> = (out.conjugate().component_mul(&out)).data.into();
-        let momentum : Vec<f64> = momentum_i.iter().map(|&m| m.re).collect();
-        let mut s = String::new();
-        s =  s + &format!("{x}\t{y}\t");
-        s =  s + &format!("{acc}\t{latdep}\t");
-
-
-        for num in momentum {
-            s.push_str(&num.to_string());
-            s.push_str("\t");
-        }
-        s.push_str("\n");
-
-        file.lock()
-        .unwrap()
-        .write_all( s.as_bytes())
-        .unwrap();
-
-        if y == 25 {
-            let result = vec![acc, latdep, latt.acc_cfi(), latt.acc_qfi()];
+           // let momentum : Vec<f64>= latt.get_momentum().data.into();
+           let p_prob: nalgebra::Matrix<nalgebra::Complex<f64>, nalgebra::Dyn, nalgebra::Const<1>, nalgebra::VecStorage<nalgebra::Complex<f64>, nalgebra::Dyn, nalgebra::Const<1>>> = latt.get_psi();
+        //   let mut planner = FftPlanner::<f32>::new();
+         //  let fft = planner.plan_fft_forward(p_prob.len());
+           
+         //  let data: Vec<Complex64> = p_prob.as_array();
+           //let mut buffer = data;
+           
+          // fft.process(&mut buffer);
+            
             let mut s = String::new();
-            for num in result {
-                s.push_str(&num.to_string());
-                s.push_str("\t");
+            s =  s + &format!("{acc},{latdep},{}, {}", total_time+time, amplitude);
+
+
+
+
+            for num in p_prob.iter() {
+                s.push_str(",");
+                //s.push_str(&num.to_string());
+                s= s + &format!("{}+{}j",num.re, num.im );
             }
             s.push_str("\n");
-    
-            file2.lock()
-            .unwrap()
+
+            file
             .write_all( s.as_bytes())
             .unwrap();
 
+
         }
-
+        total_time += PI/FREQ;
+        sign *= -1.0;
         
-      }
-      
-      bar.inc(1); acc}).collect();
+        //bar.inc(1);
 
 
+    //-----------------------------
+    }
+
+    println!("End Shaking: total time: {total_time}");
+    
+    println!("Begin Time of Flight Now");
+    latt.toggle_begin_tof();
    
+    let no_of_half_periods : u64 = 80;
+    let tof_time : f64 = no_of_half_periods as f64 * period;
+    let A = 0.0;
+
+
+    let mut time = 0.0;
+
+
+    let mut current_period : u64 = 0;
+
+    println!("Half Periods of TOF completed:");
+    while time < tof_time {
+
+        latt.rk4step( dt,  A, FREQ, time);
+        time += dt;
+
+        let p_prob = latt.get_psi();
+
+        let mut s = String::new();
+        s =  s + &format!("{acc},{latdep},{}, {}", total_time+time, A);
+
+        for num in p_prob.iter() {
+            s.push_str(",");
+            //s.push_str(&num.to_string());
+            s= s + &format!("{}+{}j",num.re, num.im );
+        }
+        s.push_str("\n");
+
+        file
+        .write_all( s.as_bytes())
+        .unwrap();
+
+        let oof =  (time/(std::f64::consts::PI/11.5)) as u64;
+
+        if oof > current_period {
+            current_period = oof;
+            println!("{} and {}", total_time + time, current_period);
+        
+        }
+        
+    }
+
+    
+
 }

@@ -52,4 +52,3 @@ plt.grid(False)
 
 
 #plt.savefig("2dfringes_g_SPMP.pdf", bbox_inches='tight')
-plt.show()
