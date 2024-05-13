@@ -21,7 +21,7 @@ plt.ylabel("$x (k_L^{-1})$ \n(double check range of $x$)")
 plt.title("Wavepacket evolution")
 print("Time when TOF starts:\t"+ str( 32*np.pi/11.5) )
 y = np.arange(-96*2,96*2,0.1);
-plt.plot(np.ones(len(y))*32*np.pi/11.5, y)
+#plt.plot(np.ones(len(y))*32*np.pi/11.5, y)
 
 
 plt.subplot(122)
@@ -30,11 +30,11 @@ plt.title("DSP shaking with TOF")
 plt.ylabel("$\phi(t) = A\sin\omega t$") 
 plt.xlabel("$t(\omega_R^{-1})$")
 y2 = np.arange(-1.5*np.pi,1.5*np.pi,0.1);
-plt.plot(np.ones(len(y2))*32*np.pi/11.5, y2)
+#plt.plot(np.ones(len(y2))*32*np.pi/11.5, y2)
 plt.tight_layout()
 
 time_to_plot = 17.5 ; # im omega_R inverse
-time_index_to_plot = int(9/dt)
+time_index_to_plot = int(5/dt)
 
 fig, ax = plt.subplots();
 # animation function. This is called sequentially

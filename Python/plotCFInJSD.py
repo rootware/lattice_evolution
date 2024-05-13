@@ -48,4 +48,3 @@ ax1.legend(lns, labs)
 
 fig.tight_layout()  # otherwise the right y-label is slightly clipped
 #plt.savefig("CFInQFI.pdf")
-plt.show()
