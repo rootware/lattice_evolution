@@ -14,3 +14,4 @@ accUnit= 2*(E_R)**2/(hbar**2*k_L);
 n_p =4; T= 32*np.pi/(2*11.5); print(T);
 F_MZ = (4*n_p *T**2)**2;
 Iaa=1.701*F_MZ;
+IVV=0.641;
